@@ -6,7 +6,7 @@
           <div class="col-md-12">
 
             <div class="section-header d-flex flex-wrap justify-content-between mb-5">
-              <h2 class="section-title">Category <?= $cat ?></h2>
+              <h2 class="section-title">gg <?= $cat ?></h2>
 
               <div class="d-flex align-items-center">
                 <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
