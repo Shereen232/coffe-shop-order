@@ -163,6 +163,20 @@
             }).format(angka);
         }
 
+        function reloadCart()
+        {
+          $.ajax({
+            url: '<?= base_url() ?>api/getcart',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+            },
+            error: function (xhr, status, error) {
+                console.error('Terjadi kesalahan saat mengambil data:', error);
+            }
+          });
+        }
+
         $.ajax({
             url: '<?= base_url() ?>api/products',
             method: 'GET',
@@ -177,13 +191,8 @@
                     <div class="col-6 col-md-3 col-lg-2">
                       <div class="product-item">
                         <span class="badge bg-success position-absolute m-3">-15%</span>
-                        <a href="#" class="btn-wishlist">
-                          <svg width="24" height="24"><use xlink:href="#heart"></use></svg>
-                        </a>
-                        <figure>
-                          <a href="<?=base_url()?>/food/category" title="${product.name}">
-                            <img src="<?=base_url()?>/FoodMart/images/${product.image}" class="tab-image">
-                          </a>
+                        <figure style="overflow:hidden;">
+                            <img src="<?=base_url('uploads/products/')?>${product.image}" class="tab-image">
                         </figure>
                         <h3>${product.name}</h3>
                         <span class="qty">1 Unit</span>
@@ -207,7 +216,7 @@
                               </button>
                             </span>
                           </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
+                          <button id="btn-addchart" data-id="${product.id}" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
                         </div>
                       </div>
                     </div>`;
@@ -218,6 +227,21 @@
             error: function (xhr, status, error) {
                 console.error('Terjadi kesalahan saat mengambil data:', error);
             }
+        });
+
+        $(document).on('click', '#btn-addchart', function(e) {
+          const id = $(this).data('id');
+          $.ajax({
+            url: `<?= base_url() ?>api/${id}/addchart`,
+            method: 'POST',
+            dataType: 'json',
+            success: function (response) {
+              console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Terjadi kesalahan saat mengambil data:', error);
+            }
+        });
         });
       });
     </script>

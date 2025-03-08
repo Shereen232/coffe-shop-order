@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <h4 class="card-title">Form Input Produk Baru</h4>
                     <p class="card-description">Harap mengisikan data produk dengan lengkap</p>
-                    <form method="post" class="forms-sample" enctype="multipart/form-data">
+                    <form action="<?= base_url('admin/product/store') ?>" method="post" class="forms-sample" enctype="multipart/form-data">
                         <?= csrf_field() ?>
                         
                         <!-- Nama Produk -->

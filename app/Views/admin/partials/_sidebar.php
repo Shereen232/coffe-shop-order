@@ -19,7 +19,7 @@
 
                 <!-- Dashboard Menu -->
                 <li class="sidebar-item">
-                    <a href="<?= base_url() ?>" class='sidebar-link'>
+                    <a href="<?= base_url('admin') ?>" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -51,7 +51,7 @@
 
                 <!-- Table Management Menu -->
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>table-management">
+                    <a class="sidebar-link" href="<?= base_url() ?>admin/tables">
                         <i class="bi bi-table"></i>
                         <span class="menu-title">Table Management</span>
                     </a>

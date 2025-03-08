@@ -1,4 +1,6 @@
-<?php namespace App\Controllers\Admin;
+<?php 
+
+namespace App\Controllers\Admin;
 
 use App\Models\CategoryModel;
 

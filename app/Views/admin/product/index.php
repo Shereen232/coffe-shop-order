@@ -47,9 +47,9 @@
                                             <td> <?= $value['category_id'] ?> </td>
                                             <td> <?= $value['stock'] ?> </td>
                                             <td> <?= number_format($value['price'], 0, ',', '.') ?> </td>
-                                            <td> <img src="<?= base_url('uploads/'.$value['image']) ?>" alt="<?= $value['name'] ?>" width="50" height="50"> </td>
+                                            <td> <img src="<?= base_url('uploads/products/'.$value['image']) ?>" alt="<?= $value['name'] ?>" width="50" height="50"> </td>
                                             <td> 
-                                                <a href="<?= base_url() ?>product/edit/<?= $value['id'] ?>" type="button" class="btn btn-primary btn-sm">
+                                                <a href="<?= base_url() ?>admin/product/edit/<?= $value['id'] ?>" type="button" class="btn btn-primary btn-sm">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(<?= $value['id'] ?>)"> 
@@ -83,7 +83,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "<?= base_url() ?>product/delete/"+id,
+                    url: "<?= base_url() ?>admin/product/delete/"+id,
                     success: function(result){
                         Swal.fire({
                             allowOutsideClick: false,

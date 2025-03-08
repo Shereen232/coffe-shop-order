@@ -8,6 +8,7 @@ use App\Models\ProductModel;
 
 class ProductController extends BaseController
 {
+    protected $categoryModel, $productModel;
     public function __construct()
     {
         $this->categoryModel = new CategoryModel();  // Menggunakan CategoryModel
@@ -33,17 +34,15 @@ class ProductController extends BaseController
     public function store()
     {
         $data = $this->request->getPost();
-
-        // Validasi data produk
-        if (!$this->validate([
+        $validate = $this->validate([
             'name'        => 'required|min_length[3]|max_length[255]',
-            'description' => 'required',
             'price'       => 'required|decimal',
             'stock'       => 'required|integer',
             'category_id' => 'required|integer',
-        ])) {
-            return redirect()->back()->withInput();
-        }
+        ]);
+
+        // Validasi data produk
+        if (!$validate)  return redirect()->back()->withInput();
 
         // Menangani upload gambar
         $image = $this->request->getFile('image');
@@ -54,63 +53,94 @@ class ProductController extends BaseController
 
         $this->productModel->save([
             'name'        => $data['name'],
-            'description' => $data['description'],
+            'description' => $data['description'] ?? null,
             'price'       => $data['price'],
             'stock'       => $data['stock'],
             'image'       => $imageName ?? null,
             'category_id' => $data['category_id'],
         ]);
 
-        return redirect()->to('/admin/products')->with('success', 'Product added successfully.');
+        return redirect()->to('/admin/products')->with('success_message', 'Product added successfully.');
     }
 
-    // Menampilkan form edit produk
     public function edit($id)
     {
-        $data['product'] = $this->productModel->find($id);
-        $data['categories'] = $this->categoryModel->findAll();  // Mengambil kategori produk
+
+        // Ambil data produk berdasarkan ID
+        $product = $this->productModel->find($id);
+        if (!$product) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException("Produk dengan ID $id tidak ditemukan.");
+        }
+
+        // Ambil data kategori untuk dropdown
+        $categories = $this->categoryModel->findAll();
+
+        $data = [
+            'title' => 'Edit Produk',
+            'product' => $product,
+            'categories' => $categories
+        ];
+
         return view('admin/product/edit', $data);
     }
 
-    // Mengupdate produk
     public function update($id)
     {
-        $data = $this->request->getPost();
-
-        // Validasi data produk
+        // Validasi input
         if (!$this->validate([
-            'name'        => 'required|min_length[3]|max_length[255]',
-            'description' => 'required',
-            'price'       => 'required|decimal',
-            'stock'       => 'required|integer',
+            'name' => 'required|min_length[3]|max_length[255]',
             'category_id' => 'required|integer',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+            'image' => 'is_image[image]|max_size[image,2048]|mime_in[image,image/png,image/jpeg,image/jpg]'
         ])) {
-            return redirect()->back()->withInput();
+            return redirect()->to('admin/product/edit/' . $id)->withInput()->with('validation', \Config\Services::validation()->getErrors());
         }
 
-        // Menangani upload gambar
+        // Ambil data produk lama
+        $product = $this->productModel->find($id);
+        if (!$product) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException("Produk dengan ID $id tidak ditemukan.");
+        }
+
+        // Proses upload gambar baru (jika ada)
         $image = $this->request->getFile('image');
-        if ($image && $image->isValid()) {
-            $imageName = $image->getRandomName();
-            $image->move('uploads/products', $imageName);
+        if ($image->isValid() && !$image->hasMoved()) {
+            $newImageName = $image->getRandomName();
+            $image->move('uploads/products/', $newImageName);
+
+            // Hapus gambar lama jika ada
+            if (!empty($product['image']) && file_exists('uploads/products/' . $product['image'])) {
+                unlink('uploads/products/' . $product['image']);
+            }
+        } else {
+            $newImageName = $product['image']; // Gunakan gambar lama jika tidak ada upload baru
         }
 
+        // Update data di database
         $this->productModel->update($id, [
-            'name'        => $data['name'],
-            'description' => $data['description'],
-            'price'       => $data['price'],
-            'stock'       => $data['stock'],
-            'image'       => $imageName ?? null,
-            'category_id' => $data['category_id'],
+            'name' => $this->request->getPost('name'),
+            'category_id' => $this->request->getPost('category_id'),
+            'price' => $this->request->getPost('price'),
+            'stock' => $this->request->getPost('stock'),
+            'image' => $newImageName
         ]);
 
-        return redirect()->to('/admin/products')->with('success', 'Product updated successfully.');
+        session()->setFlashdata('success_message', 'Produk berhasil diperbarui.');
+        return redirect()->to('admin/products');
     }
+
 
     // Menghapus produk
     public function delete($id)
     {
-        $this->productModel->delete($id);
-        return redirect()->to('/admin/products')->with('success', 'Product deleted successfully.');
+        // Menghapus    Produk berdasarkan ID
+        if ($this->productModel->delete($id)) {
+            session()->setFlashdata('success_message', '    Produk berhasil dihapus.');
+        } else {
+            session()->setFlashdata('error_message', 'Terjadi kesalahan saat menghapus  Produk.');
+        }
+
+        return redirect()->to('admin/products');
     }
 }

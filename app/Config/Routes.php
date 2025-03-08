@@ -7,6 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->get('api/products', 'ProductController::index');
+$routes->post('api/(:num)/addchart', 'ProductController::addchart/$1');
 // Menampilkan kategori produk pada /admin/category-product
 
 $routes->group('admin', function($routes) {
@@ -16,14 +17,21 @@ $routes->group('admin', function($routes) {
     $routes->post('product/store', 'Admin\ProductController::store');
     $routes->get('product/edit/(:num)', 'Admin\ProductController::edit/$1');
     $routes->post('product/update/(:num)', 'Admin\ProductController::update/$1');
-    $routes->get('product/delete/(:num)', 'Admin\ProductController::delete/$1');
+    $routes->post('product/delete/(:num)', 'Admin\ProductController::delete/$1');
 
     $routes->get('category-product', 'Admin\CategoryController::index');
     $routes->get('category-product/create', 'Admin\CategoryController::create');
+    $routes->post('category-product/store', 'Admin\CategoryController::store');
     $routes->get('category-product/edit/(:num)', 'Admin\CategoryController::edit/$1');
     $routes->post('category-product/edit/(:num)', 'Admin\CategoryController::edit/$1');
     $routes->post('category-product/delete/(:num)', 'Admin\CategoryController::delete/$1');
-    $routes->post('category-product/store', 'Admin\CategoryController::store');
+    
+    $routes->get('tables', 'Admin\TableController::index');
+    $routes->get('tables/create', 'Admin\TableController::create');
+    $routes->post('tables/store', 'Admin\TableController::store');
+    $routes->get('tables/edit/(:num)', 'Admin\TableController::edit/$1');
+    $routes->post('tables/update/(:num)', 'Admin\TableController::update/$1');
+    $routes->post('tables/delete/(:num)', 'Admin\TableController::delete/$1');
 
 
 });
