@@ -9,7 +9,7 @@ class CartModel extends Model
     protected $table            = 'carts';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ['session_id','total'];

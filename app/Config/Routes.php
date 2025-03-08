@@ -6,8 +6,12 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
-$routes->get('api/products', 'ProductController::index');
-$routes->post('api/(:num)/addchart', 'ProductController::addchart/$1');
+$routes->group('api', function($routes) {
+    $routes->get('categories', 'CategoryController::index');
+    $routes->get('products', 'ProductController::index');
+    $routes->post('(:num)/addcart', 'ProductController::addcart/$1');
+    $routes->get('(:num)/getcart', 'ProductController::getcart/$1');
+});
 // Menampilkan kategori produk pada /admin/category-product
 
 $routes->group('admin', function($routes) {
