@@ -32,7 +32,7 @@ class ProductController extends BaseController
     public function getcart($id)
     {
         $carts = $this->cartModel
-            ->select('carts.id, carts.session_id, carts.total, cart_items.product_id, cart_items.qty, cart_items.subtotal, products.name, products.description')
+            ->select('carts.id, carts.session_id, carts.total, cart_items.id as items_id,cart_items.product_id, cart_items.qty, cart_items.subtotal, products.name, products.description')
             ->join('cart_items', 'cart_items.cart_id = carts.id', 'left')
             ->join('products', 'cart_items.product_id = products.id', 'left')
             ->where('carts.session_id', $id)
@@ -50,7 +50,7 @@ class ProductController extends BaseController
         }
 
         $harga = $product->price;
-        $qty = 1;
+        $qty = $this->request->getPost('qty');
         $sessionID = 151515;
 
         // Cek apakah cart sudah ada
@@ -74,16 +74,41 @@ class ProductController extends BaseController
         ]);
 
         // Hitung ulang total harga dalam cart
-        $carts = $this->cartItemModel->where('cart_id', $cart->id)->findAll();
-        $total = 0;
-        foreach ($carts as $cartItem) {
-            $total += $cartItem->subtotal;
-        }
-
+        $totalHarga = $this->cartItemModel->selectSum('subtotal')->where('cart_id', $cart->id)->get()->getRow()->subtotal ?? 0;
         // Update total di tabel carts
-        $this->cartModel->update($cart->id, ['total' => $total]);
+        $this->cartModel->update($cart->id, ['total' => $totalHarga]);
 
         return json_encode(['product' => $id, 'status' => 'OK']);
+    }
+
+    public function deleteItem($id)
+    {
+        $sessionID = 151515;
+        $cart = $this->cartModel->where('session_id', $sessionID)->first();
+
+        if (!$cart) {
+            return $this->response->setJSON(['status' => 'ERR', 'message' => 'Cart not found']);
+        }
+
+        $cartItem = $this->cartItemModel->where('cart_id', $cart->id)->where('id', $id)->first();
+
+        if (!$cartItem) {
+            return $this->response->setJSON(['status' => 'ERR', 'message' => 'Item not found']);
+        }
+
+        $this->cartItemModel->delete($cartItem->id);
+
+        // Hitung ulang total harga
+        $totalHarga = $this->cartItemModel->selectSum('subtotal')->where('cart_id', $cart->id)->get()->getRow()->subtotal ?? 0;
+
+        // Update total harga di tabel cart
+        $this->cartModel->update($cart->id, ['total' => $totalHarga]);
+
+        return $this->response->setJSON([
+            'status' => 'OK',
+            'message' => 'Item deleted successfully',
+            'new_total' => $totalHarga
+        ]);
     }
     
 }

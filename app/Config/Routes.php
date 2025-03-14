@@ -11,6 +11,7 @@ $routes->group('api', function($routes) {
     $routes->get('products', 'ProductController::index');
     $routes->post('(:num)/addcart', 'ProductController::addcart/$1');
     $routes->get('(:num)/getcart', 'ProductController::getcart/$1');
+    $routes->post('(:num)/deleteitem', 'ProductController::deleteItem/$1');
 });
 // Menampilkan kategori produk pada /admin/category-product
 

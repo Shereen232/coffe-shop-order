@@ -155,18 +155,24 @@
             success: function (response) {
               const carts = response.carts;
               carts.forEach(product => {
-                html += `<li class="list-group-item d-flex justify-content-between lh-sm">
-                    <div>
-                    <h6 class="my-0">${product.name}</h6>
-                    <small class="text-body-secondary">${product.description}</small>
-                    </div>
-                    <span class="text-body-secondary">${formatRupiah(product.subtotal)}</span>
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                          <h6 class="my-0">${product.name}</h6>
+                          <small class="text-body-secondary">${product.description}</small>
+                      </div>
+                      <div class="d-flex align-items-center">
+                          <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>
+                          <button class="btn btn-danger btn-sm delete-item" data-index="${product.items_id}">
+                              ❌
+                          </button>
+                      </div>
+                  </li>`;
+                });
+
+                html += `<li class="list-group-item d-flex justify-content-between">
+                    <span>Total (IDR)</span>
+                    <strong>${formatRupiah(carts[0].total)}</strong>
                 </li>`;
-              });
-              html+= `<li class="list-group-item d-flex justify-content-between">
-                  <span>Total (IDR)</span>
-                  <strong>${formatRupiah(carts[0].total)}</strong>
-              </li>`;
               $('#cart-count').html(carts.length);
               $('#my-cart #countcart').html(carts.length);
               $('#my-cart ul').html(html);
@@ -218,7 +224,7 @@
                                 </button>
                               </span>
                             </div>
-                            <button id="btn-addchart" data-id="${product.id}" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
+                            <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
                           </div>
                         </div>
                       </div>`;
@@ -264,12 +270,29 @@
 
         $(document).on('click', '#btn-addchart', function(e) {
           const id = $(this).data('id');
+          const qty = $(this).data('qty');
           $.ajax({
             url: `<?= base_url() ?>api/${id}/addcart`,
             method: 'POST',
             dataType: 'json',
+            data:{qty},
             success: function (response) {
               showCartToast();
+              reloadCart();
+            },
+            error: function (xhr, status, error) {
+                console.error('Terjadi kesalahan saat mengambil data:', error);
+            }
+          });
+        });
+
+        $(document).on('click', '#my-cart ul .delete-item', function(e) {
+          const id = $(this).data('index');
+          $.ajax({
+            url: `<?= base_url() ?>api/${id}/deleteitem`,
+            method: 'POST',
+            dataType: 'json',
+            success: function (response) {
               reloadCart();
             },
             error: function (xhr, status, error) {
