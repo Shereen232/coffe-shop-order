@@ -123,6 +123,7 @@ class ProductController extends BaseController
             'category_id' => $this->request->getPost('category_id'),
             'price' => $this->request->getPost('price'),
             'stock' => $this->request->getPost('stock'),
+            'description' => $this->request->getPost('description'),
             'image' => $newImageName
         ]);
 

@@ -1,16 +1,19 @@
 <?= $this->extend('Customer/template/index.php') ?>
-<?= $this->section('app') ?>   
-  <div id="cart-toast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg small-toast" role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 999;">
-    <div class="d-flex">
-      <div class="toast-body d-flex align-items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" style="width: 20px; height: 20px;">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-        Produk berhasil ditambahkan ke keranjang!
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
+<?= $this->section('app') ?>
+<style>
+  .active-category {
+    background-color: #85A83A !important; /* Bootstrap green */
+    color: white !important;
+    border-radius: 10px;
+    transition: 0.2s;
+  }
+  .categories-container .active-category .category-title{
+    color: white !important;
+  }
+  a {
+    text-decoration: none !important;
+  }
+</style>
 
     <section class="py-3" style="background-image: url('<?=base_url() ?>FoodMart/images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
       <div class="container-fluid">
@@ -80,16 +83,8 @@
         <div class="row">
           <div class="col-md-12">
 
-            <div class="section-header d-flex flex-wrap justify-content-between mb-5">
-              <h2 class="section-title">Category</h2>
-
-              <div class="d-flex align-items-center">
-                <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
-                <div class="swiper-buttons">
-                  <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
-                  <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
-                </div>
-              </div>
+            <div class="section-header text-center mb-5">
+              <h2 class="section-title">Products</h2>
             </div>
             
           </div>
@@ -102,21 +97,12 @@
       </div>
     </section>
 
-    <section class="py-5 overflow-hidden">
+    <section class="pb-5 overflow-hidden">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
 
-            <div class="section-header d-flex flex-wrap justify-content-between my-5">
-              <h2 class="section-title">Best selling products</h2>
-            </div>
-            
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-
-            <div class="products-container row">
+            <div id="products-section" class="products-container row">
             </div>
             <!-- / products-carousel -->
 
@@ -137,71 +123,29 @@
             }).format(angka);
         }
 
-        function showCartToast() {
-            let toastEl = document.getElementById("cart-toast");
-            let toast = new bootstrap.Toast(toastEl);
-
-            toast.show();
-        }
-
-        function reloadCart()
-        {
-          const id = 151515;
-          let html = '';
-          $.ajax({
-            url: `<?= base_url() ?>api/${id}/getcart`,
-            method: 'GET',
-            dataType: 'json',
-            success: function (response) {
-              const carts = response.carts;
-              carts.forEach(product => {
-                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
-                      <div>
-                          <h6 class="my-0">${product.name}</h6>
-                          <small class="text-body-secondary">${product.description}</small>
-                      </div>
-                      <div class="d-flex align-items-center">
-                          <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>
-                          <button class="btn btn-danger btn-sm delete-item" data-index="${product.items_id}">
-                              ❌
-                          </button>
-                      </div>
-                  </li>`;
-                });
-
-                html += `<li class="list-group-item d-flex justify-content-between">
-                    <span>Total (IDR)</span>
-                    <strong>${formatRupiah(carts[0].total)}</strong>
-                </li>`;
-              $('#cart-count').html(carts.length);
-              $('#my-cart #countcart').html(carts.length);
-              $('#my-cart ul').html(html);
-            },
-            error: function (xhr, status, error) {
-                console.error('Terjadi kesalahan saat mengambil data:', error);
-            }
-          });
-        }reloadCart();
-
-        function getProducts()
+        function reloadProducts(category = null)
         {
           $.ajax({
               url: '<?= base_url() ?>api/products',
               method: 'GET',
               dataType: 'json',
+              data: { category: category },
               success: function (data) {
                   const contentParent = $('.products-container');
                   
                   let html = "";
   
-                  data.products.forEach(product => {
+                  if (data.products && data.products.length > 0) {
+                    data.products.forEach(product => {
                       html += `
                       <div class="col-6 col-md-3 col-lg-2">
                         <div class="product-item">
                           <span class="badge bg-success position-absolute m-3">-15%</span>
+                          <a href="<?= base_url() ?>product/${product.id}">
                           <figure style="overflow:hidden;">
                               <img src="<?=base_url('uploads/products/')?>${product.image}" class="tab-image">
                           </figure>
+                          </a>
                           <h3>${product.name}</h3>
                           <span class="qty">1 Unit</span>
                           <span class="rating">
@@ -228,7 +172,11 @@
                           </div>
                         </div>
                       </div>`;
-                  });
+                    });
+                  } else {
+                      // Tampilkan pesan kalau produk kosong
+                      html = '<p class="text-center">Produk tidak ditemukan.</p>';
+                  }
   
                   contentParent.html(html);
               },
@@ -236,7 +184,7 @@
                   console.error('Terjadi kesalahan saat mengambil data:', error);
               }
           });
-        }getProducts();
+        }reloadProducts();
 
         function getCategories()
         {
@@ -253,10 +201,10 @@
                       html += `
                       <div class="col-4 col-md-3 col-lg-2">
                         <div class="product-item d-flex flex-column align-items-center justify-content-center text-center">
-                          <a href="<?=base_url('?category=')?>${category.nama_category}" class="nav-link category-item swiper-slide">
+                          <button data-id="${category.id}" class="nav-link category-item swiper-slide pt-2 pb-2">
                             <img src="<?=base_url() ?>${category.image}" alt="${category.nama_category}">
                             <h3 class="category-title">${category.nama_category}</h3>
-                          </a>
+                          </button>
                       </div></div>`;
                     });
   
@@ -268,38 +216,31 @@
           });
         }getCategories();
 
-        $(document).on('click', '#btn-addchart', function(e) {
+        $(document).on('click', '.category-item', function(e) {
+          e.preventDefault();
+           // Hapus kelas active dari semua kategori
+          $('.category-item').removeClass('active-category');
+
+          // Tambahkan kelas active pada yang diklik
+          $(this).addClass('active-category');
+
           const id = $(this).data('id');
-          const qty = $(this).data('qty');
-          $.ajax({
-            url: `<?= base_url() ?>api/${id}/addcart`,
-            method: 'POST',
-            dataType: 'json',
-            data:{qty},
-            success: function (response) {
-              showCartToast();
-              reloadCart();
-            },
-            error: function (xhr, status, error) {
-                console.error('Terjadi kesalahan saat mengambil data:', error);
-            }
-          });
+        
+          if (id) {
+            reloadProducts(id);
+          } else {
+            reloadProducts();
+          }
+
+          const productSection = document.getElementById('products-section');
+          if (productSection) {
+              productSection.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'center'
+              });
+          }
         });
 
-        $(document).on('click', '#my-cart ul .delete-item', function(e) {
-          const id = $(this).data('index');
-          $.ajax({
-            url: `<?= base_url() ?>api/${id}/deleteitem`,
-            method: 'POST',
-            dataType: 'json',
-            success: function (response) {
-              reloadCart();
-            },
-            error: function (xhr, status, error) {
-                console.error('Terjadi kesalahan saat mengambil data:', error);
-            }
-          });
-        });
       });
     </script>
 <?= $this->endSection() ?>

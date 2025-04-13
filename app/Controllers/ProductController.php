@@ -26,7 +26,7 @@ class ProductController extends BaseController
             $products = $this->productModel->findAll();
         }
 
-        return json_encode(['products' => $products]);
+        return json_encode(['products' => $products, 'category' => $category]);
     }
 
     public function getcart($id)

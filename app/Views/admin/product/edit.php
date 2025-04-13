@@ -45,6 +45,13 @@
                             <small class="text-danger"><?= session()->getFlashdata('validation')['stock'] ?? '' ?></small>
                         </div>
 
+                        <!-- Deskripsi -->
+                        <div class="form-group">
+                            <label for="description">Deskripsi Produk</label>
+                            <textarea name="description" class="form-control" placeholder="Masukan deskripsi produk"><?= old('description', $product['description']) ?></textarea>
+                            <small class="text-danger"><?= !empty(session()->getFlashdata('validation')['description']) ? session()->getFlashdata('validation')['description'] : '' ?></small>
+                        </div>
+
                         <!-- Gambar Produk -->
                         <div class="form-group">
                             <label for="image">Gambar Produk</label>

@@ -47,6 +47,13 @@
                             <small class="text-danger"><?= !empty(session()->getFlashdata('validation')['price']) ? session()->getFlashdata('validation')['price'] : '' ?></small>
                         </div>
 
+                        <!-- Deskripsi -->
+                        <div class="form-group">
+                            <label for="description">Deskripsi Produk</label>
+                            <textarea name="description" class="form-control" placeholder="Masukan deskripsi produk"><?= old('description') ?></textarea>
+                            <small class="text-danger"><?= !empty(session()->getFlashdata('validation')['description']) ? session()->getFlashdata('validation')['description'] : '' ?></small>
+                        </div>
+
                         <!-- Gambar Produk -->
                         <div class="form-group">
                             <label for="image">Gambar Produk</label>

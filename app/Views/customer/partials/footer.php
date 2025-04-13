@@ -37,57 +37,7 @@
             </div>
           </div>
 
-          <div class="col-md-2 col-sm-6">
-            <div class="footer-menu">
-              <h5 class="widget-title">Ultras</h5>
-              <ul class="menu-list list-unstyled">
-                <li class="menu-item">
-                  <a href="#" class="nav-link">About us</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Conditions </a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Our Journals</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Careers</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Affiliate Programme</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Ultras Press</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-2 col-sm-6">
-            <div class="footer-menu">
-              <h5 class="widget-title">Customer Service</h5>
-              <ul class="menu-list list-unstyled">
-                <li class="menu-item">
-                  <a href="#" class="nav-link">FAQ</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Contact</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Privacy Policy</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Returns & Refunds</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Cookie Guidelines</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Delivery Information</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-2 col-sm-6">
+          <div class="offset-md-4 col-md-2 col-sm-6">
             <div class="footer-menu">
               <h5 class="widget-title">Customer Service</h5>
               <ul class="menu-list list-unstyled">

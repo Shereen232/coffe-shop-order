@@ -6,6 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
+$routes->get('/product/(:num)', 'Home::show/$1');
 $routes->group('api', function($routes) {
     $routes->get('categories', 'CategoryController::index');
     $routes->get('products', 'ProductController::index');
