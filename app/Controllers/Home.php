@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ProductModel;
+use App\Models\ReviewModel;
 
 class Home extends BaseController
 {
@@ -15,8 +16,10 @@ class Home extends BaseController
     {
         // Ambil data produk berdasarkan ID
         $productModel = new ProductModel();
+        $reviewModel = new ReviewModel();
         $data['title'] = 'Deskripsi Produk';
         $data['product'] = $productModel->asObject()->find($id);
+        $data['reviews'] = $reviewModel->asObject()->where('product_id', $id)->findAll();
         return view('customer/food/index.php', $data);
     }
 }

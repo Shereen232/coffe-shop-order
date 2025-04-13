@@ -29,6 +29,18 @@ class ProductController extends BaseController
         return json_encode(['products' => $products, 'category' => $category]);
     }
 
+    public function search()
+    {
+        $keyword = $this->request->getGet('q');
+
+        if (!$keyword) {
+            return ['status' => 'ERROR', 'message' => 'Keyword tidak boleh kosong'];
+        }
+        $products = $this->productModel->like('name', $keyword)->findAll();
+
+        return json_encode(['products' => $products]);
+    }
+
     public function getcart($id)
     {
         $carts = $this->cartModel

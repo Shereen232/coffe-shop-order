@@ -19,7 +19,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-
+    <style>
+    a {
+      text-decoration: none !important;
+    }
+    </style>
   </head>
   <body>
     <div id="cart-toast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg small-toast" role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 999;">
@@ -73,7 +77,6 @@
               html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="my-0">${product.name}</h6>
-                        <small class="text-body-secondary">${product.description}</small>
                     </div>
                     <div class="d-flex align-items-center">
                         <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>

@@ -10,9 +10,6 @@
   .categories-container .active-category .category-title{
     color: white !important;
   }
-  a {
-    text-decoration: none !important;
-  }
 </style>
 
     <section class="py-3" style="background-image: url('<?=base_url() ?>FoodMart/images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
@@ -140,7 +137,7 @@
                       html += `
                       <div class="col-6 col-md-3 col-lg-2">
                         <div class="product-item">
-                          <span class="badge bg-success position-absolute m-3">-15%</span>
+                          <span class="badge bg-success position-absolute m-3">${product.price_discount <= 0 ? '' : '-'+product.price_discount+'%'}</span>
                           <a href="<?= base_url() ?>product/${product.id}">
                           <figure style="overflow:hidden;">
                               <img src="<?=base_url('uploads/products/')?>${product.image}" class="tab-image">

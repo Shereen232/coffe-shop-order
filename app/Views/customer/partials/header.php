@@ -67,14 +67,15 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <div class="order-md-last">
+        <div class="order-md-last position-relative">
           <h4 class="d-flex justify-content-between align-items-center mb-3">
             <span class="text-primary">Search</span>
           </h4>
-          <form role="search" action="index.html" method="get" class="d-flex mt-3 gap-0">
-            <input class="form-control rounded-start rounded-0 bg-light" type="email" placeholder="What are you looking for?" aria-label="What are you looking for?">
+          <div id="search-form-mobile" class="d-flex mt-3 gap-0">
+            <input id="search-input-mobile" type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
             <button class="btn btn-dark rounded-end rounded-0" type="submit">Search</button>
-          </form>
+          </div>
+          <ul id="search-results-mobile" class="list-group position-absolute z-3 w-100 mt-1 d-none bg-white shadow-sm rounded-3" style="max-height: 250px; overflow-y: hidden;"></ul>
         </div>
       </div>
     </div>
@@ -85,32 +86,35 @@
           
           <div class="col-sm-4 col-lg-3 text-center text-sm-start">
             <div class="main-logo">
-              <a href="index.html">
+              <a href="<?= base_url() ?>">
                 <img src="images/logo.png" alt="logo" class="img-fluid">
               </a>
             </div>
           </div>
           
           <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
-            <div class="search-bar row bg-light p-2 my-2 rounded-4">
-              <div class="col-md-4 d-none d-md-block">
-                <select class="form-select border-0 bg-transparent">
-                  <option>All Categories</option>
-                  <option>Groceries</option>
-                  <option>Drinks</option>
-                  <option>Chocolates</option>
-                </select>
-              </div>
-              <div class="col-11 col-md-7">
-                <form id="search-form" class="text-center" action="index.html" method="post">
-                  <input type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
-                </form>
-              </div>
-              <div class="col-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/></svg>
+              <div class="search-bar row bg-light p-2 my-2 rounded-4">
+                <div class="col-md-4 d-none d-md-block">
+                  <select class="form-select border-0 bg-transparent">
+                    <option>All Categories</option>
+                    <option>Groceries</option>
+                    <option>Drinks</option>
+                    <option>Chocolates</option>
+                  </select>
+                </div>
+                <div class="col-11 col-md-7 position-relative">
+                  <div id="search-form" class="text-center">
+                    <input id="search-input" type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
+                  </div>
+
+                  <!-- 🔽 Dropdown Hasil -->
+                  <ul id="search-results" class="list-group position-absolute z-3 w-100 mt-1 d-none bg-white shadow-sm rounded-3" style="max-height: 250px; overflow-y: hidden;"></ul>
+                </div>
+                <div class="col-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/></svg>
+                </div>
               </div>
             </div>
-          </div>
           
           <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
             <div class="support-box text-end d-none d-xl-block">
@@ -157,3 +161,108 @@
       </div>
       
     </header>
+    <script src="<?=base_url() ?>Foodmart/js/jquery-1.11.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    const $input = $('#search-input');
+    const $results = $('#search-results');
+
+    $input.on('input', function () {
+      const query = $(this).val().trim();
+
+      if (query.length < 2) {
+        $results.addClass('d-none');
+        return;
+      }
+
+      $.ajax({
+        url: '<?= base_url("api/search") ?>', // Ganti sesuai endpoint kamu
+        method: 'GET',
+        data: { q: query },
+        success: function (response) {
+          $results.empty();
+
+          if (response.length === 0) {
+            $results.append('<li class="list-group-item text-muted">No results found</li>');
+          } else {
+            const data = JSON.parse(response);
+            
+            data.products.forEach(item => {
+              $results.append(`
+                <li class="list-group-item search-result-item" style="cursor: pointer;">
+                <a href="<?= base_url('product') ?>/${item.id}">
+                  <img src="<?= base_url('uploads/products/') ?>/${item.image}" alt="${item.name}" class="img-fluid me-2" style="width: 50px; height: 50px;">
+                  ${item.name}
+                </li>`);
+            });
+          }
+
+          $results.removeClass('d-none');
+        },
+        error: function () {
+          $results.html('<li class="list-group-item">Error fetching results</li>');
+          $results.removeClass('d-none');
+        }
+      });
+    });
+
+    // Hide dropdown on outside click
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('#search-form').length) {
+        $results.addClass('d-none');
+      }
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    const $input = $('#search-input-mobile');
+    const $results = $('#search-results-mobile');
+
+    $input.on('input', function () {
+      const query = $(this).val().trim();
+
+      if (query.length < 2) {
+        $results.addClass('d-none');
+        return;
+      }
+
+      $.ajax({
+        url: '<?= base_url("api/search") ?>', // Ganti sesuai endpoint kamu
+        method: 'GET',
+        data: { q: query },
+        success: function (response) {
+          $results.empty();
+
+          if (response.length === 0) {
+            $results.append('<li class="list-group-item text-muted">No results found</li>');
+          } else {
+            const data = JSON.parse(response);
+            
+            data.products.forEach(item => {
+              $results.append(`
+                <li class="list-group-item search-result-item" style="cursor: pointer;">
+                <a href="<?= base_url('product') ?>/${item.id}">
+                  <img src="<?= base_url('uploads/products/') ?>/${item.image}" alt="${item.name}" class="img-fluid me-2" style="width: 50px; height: 50px;">
+                  ${item.name}
+                </li>`);
+            });
+          }
+
+          $results.removeClass('d-none');
+        },
+        error: function () {
+          $results.html('<li class="list-group-item">Error fetching results</li>');
+          $results.removeClass('d-none');
+        }
+      });
+    });
+
+    // Hide dropdown on outside click
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('#search-form-mobile').length) {
+        $results.addClass('d-none');
+      }
+    });
+  });
+</script>
