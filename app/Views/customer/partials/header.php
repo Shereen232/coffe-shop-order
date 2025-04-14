@@ -87,7 +87,7 @@
           <div class="col-sm-4 col-lg-3 text-center text-sm-start">
             <div class="main-logo">
               <a href="<?= base_url() ?>">
-                <img src="images/logo.png" alt="logo" class="img-fluid">
+                <img src="<?= base_url('images/logo.jpg') ?>" width="80" alt="logo" class="img-fluid rounded-circle">
               </a>
             </div>
           </div>
@@ -118,8 +118,8 @@
           
           <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
             <div class="support-box text-end d-none d-xl-block">
-              <span class="fs-6 text-muted">For Support?</span>
-              <h5 class="mb-0">+980-34984089</h5>
+              <span class="fs-6 text-muted">Whatsapp?</span>
+              <h5 class="mb-0">081902518326</h5>
             </div>
 
             <ul class="d-flex justify-content-end list-unstyled m-0">
@@ -150,7 +150,7 @@
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <use xlink:href="#cart"></use>
                 </svg>
-                <span id="cart-count" style="background-color: red;" class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
+                <span id="cart-count" style="background-color: red;" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill">
                   0
                 </span>
               </button>

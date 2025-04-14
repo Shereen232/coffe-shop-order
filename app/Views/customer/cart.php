@@ -7,5 +7,5 @@
     
     </ul>
 
-    <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+    <button onclick="window.location.href='<?= base_url('checkout') ?>'" class="w-100 btn btn-primary btn-lg">Continue to checkout</button>
 </div>

@@ -7,7 +7,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->get('/product/(:num)', 'Home::show/$1');
+$routes->get('/checkout', 'PaymentController::checkout');
 $routes->group('api', function($routes) {
+    $routes->post('(:num)/order', 'PaymentController::order/$1');
     $routes->get('categories', 'CategoryController::index');
     $routes->get('products', 'ProductController::index');
     $routes->get('banners', 'ProductController::banners');

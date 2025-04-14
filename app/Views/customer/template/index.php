@@ -73,25 +73,29 @@
           dataType: 'json',
           success: function (response) {
             const carts = response.carts;
-            carts.forEach(product => {
-              html += `<li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="my-0">${product.name}</h6>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>
-                        <button class="btn btn-danger btn-sm delete-item" data-index="${product.items_id}">
-                            ❌
-                        </button>
-                    </div>
-                </li>`;
+            if (carts && carts.length > 0) {
+              carts.forEach(product => {
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                          <h6 class="my-0">${product.name}</h6>
+                      </div>
+                      <div class="d-flex align-items-center">
+                          <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>
+                          <button class="btn btn-danger btn-sm delete-item" data-index="${product.items_id}">
+                              ❌
+                          </button>
+                      </div>
+                  </li>`;
               });
-
+  
               html += `<li class="list-group-item d-flex justify-content-between">
                   <span>Total (IDR)</span>
                   <strong>${formatRupiah(carts[0].total)}</strong>
               </li>`;
-            $('#cart-count').html(carts.length);
+              $('#cart-count').removeClass('d-none');
+              $('#cart-count').html(carts.length);
+            }else html += 'keranjang masih kosong';
+            
             $('#my-cart #countcart').html(carts.length);
             $('#my-cart ul').html(html);
           },
@@ -133,6 +137,23 @@
             }
           });
         });
+
+        // $(document).on('click', '#btn-checkout', function(e) {
+        //   const id = 151515;
+        //   $.ajax({
+        //     url: `<?= base_url() ?>api/${id}/checkout`,
+        //     method: 'POST',
+        //     dataType: 'json',
+        //     success: function (response) {
+        //       alert(response.message);
+        //       window.location.href = '<?= base_url() ?>checkout';
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error('Terjadi kesalahan saat mengambil data:', error);
+        //     }
+        //   });
+        // });
+
     </script>
   </body>
 </html>
