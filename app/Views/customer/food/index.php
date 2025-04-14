@@ -62,6 +62,7 @@
 
     <!-- Dummy review loop -->
     <div class="list-group">
+      <?php if ($reviews == null) echo '<div>Belum ada ulasan untuk produk ini.</div>'; ?>
       <?php foreach ($reviews as $key => $review) : ?>
       <?php $timestamp = strtotime($review->created_at); ?>
       <div class="list-group-item">

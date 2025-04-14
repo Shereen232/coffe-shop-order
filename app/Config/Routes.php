@@ -10,6 +10,7 @@ $routes->get('/product/(:num)', 'Home::show/$1');
 $routes->group('api', function($routes) {
     $routes->get('categories', 'CategoryController::index');
     $routes->get('products', 'ProductController::index');
+    $routes->get('banners', 'ProductController::banners');
     $routes->post('(:num)/addcart', 'ProductController::addcart/$1');
     $routes->get('(:num)/getcart', 'ProductController::getcart/$1');
     $routes->post('(:num)/deleteitem', 'ProductController::deleteItem/$1');

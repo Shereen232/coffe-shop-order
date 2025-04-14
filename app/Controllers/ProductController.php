@@ -4,14 +4,16 @@ namespace App\Controllers;
 
 use App\Models\CartItemModel;
 use App\Models\CartModel;
+use App\Models\ProductBannerModel;
 use App\Models\ProductModel;
 
 class ProductController extends BaseController
 {
-    protected $productModel, $cartModel, $cartItemModel;
+    protected $productModel, $productBannerModel, $cartModel, $cartItemModel;
     public function __construct()
     {
         $this->productModel = new ProductModel();
+        $this->productBannerModel = new ProductBannerModel();
         $this->cartModel = new CartModel();
         $this->cartItemModel = new CartItemModel();
     }
@@ -27,6 +29,13 @@ class ProductController extends BaseController
         }
 
         return json_encode(['products' => $products, 'category' => $category]);
+    }
+
+    public function banners()
+    {
+        $banners = $this->productBannerModel->findAll();
+
+        return json_encode(['banners' => $banners]);
     }
 
     public function search()

@@ -20,48 +20,8 @@
             <div class="banner-ad large bg-info ">
 
               <div class="swiper main-swiper">
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <div class="row banner-content p-5">
-                      <div class="content-wrapper col-md-7">
-                        <div class="categories my-3">100% natural</div>
-                        <h3 class="display-4">Fresh Smoothie & Summer Juice</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
-                        <a href="#" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop Now</a>
-                      </div>
-                      <div class="img-wrapper col-md-5">
-                        <img src="<?=base_url() ?>FoodMart/images/product-thumb-1.png" class="img-fluid">
-                      </div>
-                    </div>
-                  </div>
+                <div id="product-banners" class="swiper-wrapper">
                   
-                  <div class="swiper-slide">
-                    <div class="row banner-content p-5">
-                      <div class="content-wrapper col-md-7">
-                        <div class="categories mb-3 pb-3">100% natural</div>
-                        <h3 class="banner-title">Fresh Smoothie & Summer Juice</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
-                        <a href="#" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop Collection</a>
-                      </div>
-                      <div class="img-wrapper col-md-5">
-                        <img src="<?=base_url() ?>FoodMart/images/product-thumb-1.png" class="img-fluid">
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="swiper-slide">
-                    <div class="row banner-content p-5">
-                      <div class="content-wrapper col-md-7">
-                        <div class="categories mb-3 pb-3">100% natural</div>
-                        <h3 class="banner-title">Heinz Tomato Ketchup</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
-                        <a href="#" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop Collection</a>
-                      </div>
-                      <div class="img-wrapper col-md-5">
-                        <img src="<?=base_url() ?>FoodMart/images/product-thumb-2.png" class="img-fluid">
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 
                 <div class="swiper-pagination"></div>
@@ -182,6 +142,42 @@
               }
           });
         }reloadProducts();
+
+        function getBanners()
+        {
+          $.ajax({
+              url: '<?= base_url() ?>api/banners',
+              method: 'GET',
+              dataType: 'json',
+              success: function (data) {
+                  const contentParent = $('#product-banners');
+                  
+                  let html = "";
+  
+                  data.banners.forEach(banner => {
+                      html += `
+                      <div class="swiper-slide">
+                        <div class="row banner-content p-5">
+                          <div class="content-wrapper col-md-7">
+                            <div class="categories my-3">100% natural</div>
+                            <h3 class="display-4">${banner.name}</h3>
+                            <p>${banner.description}</p>
+                            <a href="<?=base_url('product/')?>${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop Now</a>
+                          </div>
+                          <div class="img-wrapper col-md-5">
+                            <img src="<?=base_url('uploads/products/')?>${banner.image}" class="img-fluid">
+                          </div>
+                        </div>
+                      </div>`;
+                    });
+  
+                  contentParent.html(html);
+              },
+              error: function (xhr, status, error) {
+                  console.error('Terjadi kesalahan saat mengambil data:', error);
+              }
+          });
+        }getBanners();
 
         function getCategories()
         {
