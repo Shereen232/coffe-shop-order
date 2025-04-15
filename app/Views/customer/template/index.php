@@ -65,7 +65,7 @@
 
       function reloadCart()
       {
-        const id = 151515;
+        const id = <?= session('session')['table_id'] ?? '0' ?>;
         let html = '';
         $.ajax({
           url: `<?= base_url() ?>api/${id}/getcart`,
@@ -81,7 +81,7 @@
                       </div>
                       <div class="d-flex align-items-center">
                           <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>
-                          <button class="btn btn-danger btn-sm delete-item" data-index="${product.items_id}">
+                          <button class="btn btn-danger btn-sm delete-item" data-index="${product.items_id ?? product.product_id}">
                               ❌
                           </button>
                       </div>

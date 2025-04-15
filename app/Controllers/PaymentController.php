@@ -22,12 +22,16 @@ class PaymentController extends BaseController
 
     public function checkout()
     {
+        $sessionID = session('session')['table_id'] ?? null;
+        if (!$sessionID) {
+            return redirect()->to('auth/login')->with('error', 'Silakan login terlebih dahulu!');
+        }
         $cart = $this->cartModel
-            ->where('session_id', 151515)
+            ->where('session_id', $sessionID)
             ->orderBy('id', 'DESC')
             ->first();
         if (!$cart) {
-            return redirect()->to('/cart')->with('error', 'Keranjang kosong!');
+            return redirect()->back()->with('error', 'Keranjang kosong!');
         }
 
         $data = [

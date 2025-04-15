@@ -2,15 +2,17 @@
 
 namespace App\Controllers;
 
+use App\Models\CartModel;
 use App\Models\TableModel;
 
 class AuthController extends BaseController
 {
-    protected $tableModel;
+    protected $tableModel, $cartModel, $cartItemModel;
 
     public function __construct()
     {
         $this->tableModel = new TableModel();
+        $this->cartModel = new CartModel();
     }
 
     public function login(): string
@@ -68,6 +70,7 @@ class AuthController extends BaseController
 
         $table['status'] = 'available';
         $this->tableModel->update($table['id'], $table);
+        $this->cartModel->where('session_id', session('session')['table_id'])->delete();
         session()->destroy();
 
         // Redirect ke halaman login setelah logout
