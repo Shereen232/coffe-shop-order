@@ -41,19 +41,19 @@
                     </a>
                 </li>
 
-                <!-- Order Management Menu -->
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>order-management">
-                        <i class="bi bi-cart"></i>
-                        <span class="menu-title">Order Management</span>
-                    </a>
-                </li>
-
                 <!-- Table Management Menu -->
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/tables">
                         <i class="bi bi-table"></i>
                         <span class="menu-title">Table Management</span>
+                    </a>
+                </li>
+
+                <!-- Order Management Menu -->
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="<?= base_url() ?>order-management">
+                        <i class="bi bi-cart"></i>
+                        <span class="menu-title">Order Management</span>
                     </a>
                 </li>
 
@@ -67,31 +67,23 @@
 
                 <!-- Review Management Menu -->
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>review-management">
+                    <a class="sidebar-link" href="<?= base_url() ?>admin/reviews">
                         <i class="bi bi-star"></i>
                         <span class="menu-title">Review Management</span>
                     </a>
                 </li>
 
-                <!-- Admin Settings Menu -->
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin-settings">
-                        <i class="bi bi-person-workspace"></i>
-                        <span class="menu-title">Admin Settings</span>
-                    </a>
-                </li>
-
                 <!-- Reports Menu -->
-                <li class="sidebar-item">
+                <!-- <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>reports">
                         <i class="bi bi-file-earmark-bar-graph"></i>
                         <span class="menu-title">Reports</span>
                     </a>
-                </li>
+                </li> -->
 
                 <!-- Profile Menu -->
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>profile">
+                    <a class="sidebar-link" href="<?= base_url() ?>admin/my-account">
                         <i class="bi bi-person-circle"></i>
                         <span class="menu-title">Akun Saya</span>
                     </a>

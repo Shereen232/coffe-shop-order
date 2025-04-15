@@ -30,6 +30,7 @@ $routes->group('api', function($routes) {
 // Menampilkan kategori produk pada /admin/category-product
 
 $routes->group('admin', function($routes) {
+    $routes->get('my-account', 'Admin\DashboardController::myAccount');
     $routes->get('/', 'Admin\DashboardController::index');
     $routes->get('products', 'Admin\ProductController::index');
     $routes->get('product/create', 'Admin\ProductController::create');
@@ -51,5 +52,10 @@ $routes->group('admin', function($routes) {
     $routes->get('tables/edit/(:num)', 'Admin\TableController::edit/$1');
     $routes->post('tables/update/(:num)', 'Admin\TableController::update/$1');
     $routes->get('tables/delete/(:num)', 'Admin\TableController::delete/$1');
+
+    $routes->group('reviews', function($routes){
+        $routes->get('', 'Admin\ReviewController::index');
+        $routes->post('delete/(:num)', 'Admin\ReviewController::delete/$1');
+    });
 });
 
