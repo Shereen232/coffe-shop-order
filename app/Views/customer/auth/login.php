@@ -42,12 +42,13 @@
             <p class="text-muted mb-4">Silakan scan QR Code di meja Anda untuk login</p>
 
             <div class="my-4">
-                <img src="<?= base_url('uploads/table/meja-1.png') ?>" alt="QR Code Login" class="img-fluid rounded-3 shadow" style="max-width: 180px;">
-                <select name="" id="" class="form-control mt-4">
-                    <option value="meja_1">Meja #1</option>
-                    <option value="meja_2">Meja #2</option>
-                    <option value="meja_3">Meja #3</option>
-                    <option value="meja_4">Meja #4</option>
+                <img id="qr-code" src="" alt="QR Code" class="img-fluid" style="max-width: 180px; height: auto;">
+                <select id="select-meja" class="form-control mt-4">
+                    <option value="">Pilih Meja Anda</option>
+                    <option value="T01">Meja #1</option>
+                    <option value="T02">Meja #2</option>
+                    <option value="T03">Meja #3</option>
+                    <option value="T04">Meja #4</option>
                 </select>
             </div>
 
@@ -60,5 +61,45 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="<?=base_url() ?>Foodmart/js/plugins.js"></script>
     <script src="<?=base_url() ?>Foodmart/js/script.js"></script>
+    <script>
+      $(document).ready(function() {
+        // URL endpoint untuk mengambil QR Code
+        const qrCodeUrl = '<?= base_url('api/get/qr/') ?>'; // Ganti dengan URL yang sesuai
+        
+        // Fungsi untuk mengambil dan menampilkan QR Code
+        function fetchQRCode(id) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', qrCodeUrl+id, true);
+            xhr.responseType = 'blob'; // Mengatur tipe respons menjadi 'blob' untuk gambar
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Membuat objek URL untuk menampilkan gambar QR Code
+                    const qrImageUrl = URL.createObjectURL(xhr.response);
+                    // Menampilkan gambar QR di elemen dengan id "qr-code"
+                    $('#qr-code').attr('src', qrImageUrl);
+                } else {
+                    console.error("Error fetching QR code:", xhr.statusText);
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error("Error fetching QR code: Network error");
+            };
+
+            xhr.send();
+        }
+
+        $('#select-meja').change(function() {
+            const selectedValue = $(this).val();
+            if (selectedValue) {
+                // Mengambil QR Code untuk meja yang dipilih
+                fetchQRCode(selectedValue);
+            }else{
+              $('#qrCodeContainer').html('');
+            }
+        });
+    });
+    </script>
   </body>
 </html>

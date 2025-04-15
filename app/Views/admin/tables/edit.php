@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Edit Meja</h4>
-                    <form action="<?= base_url('tables/update/' . $table['id']) ?>" method="post">
+                    <form action="<?= base_url('admin/tables/update/' . $table['id']) ?>" method="post">
                         <?= csrf_field() ?>
                         <div class="form-group">
                             <label for="table_number">Nomor Meja</label>

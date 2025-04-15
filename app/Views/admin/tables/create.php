@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Tambah Meja</h4>
-                    <form action="<?= base_url('tables/store') ?>" method="post">
+                    <form action="<?= base_url('admin/tables/store') ?>" method="post">
                         <?= csrf_field() ?>
                         <div class="form-group">
                             <label for="table_number">Nomor Meja</label>

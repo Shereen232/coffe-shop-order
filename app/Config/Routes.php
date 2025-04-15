@@ -5,8 +5,13 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('auth/login', 'AuthController::login');
+
+$routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
+    $routes->get('login', 'AuthController::login');
+    $routes->get('login/(:segment)', 'AuthController::dologin/$1');
+});
 $routes->get('/', 'Home::index');
+$routes->get('auth/logout', 'AuthController::logout');
 $routes->get('/product/(:num)', 'Home::show/$1');
 $routes->get('/kontak-kami', 'Home::contactUs');
 $routes->get('/faq', 'Home::faq');
@@ -20,6 +25,7 @@ $routes->group('api', function($routes) {
     $routes->get('(:num)/getcart', 'ProductController::getcart/$1');
     $routes->post('(:num)/deleteitem', 'ProductController::deleteItem/$1');
     $routes->get('search', 'ProductController::search');
+    $routes->get('get/qr/(:segment)', 'Admin\TableController::generateQr/$1');
 });
 // Menampilkan kategori produk pada /admin/category-product
 
@@ -44,8 +50,6 @@ $routes->group('admin', function($routes) {
     $routes->post('tables/store', 'Admin\TableController::store');
     $routes->get('tables/edit/(:num)', 'Admin\TableController::edit/$1');
     $routes->post('tables/update/(:num)', 'Admin\TableController::update/$1');
-    $routes->post('tables/delete/(:num)', 'Admin\TableController::delete/$1');
-
-
+    $routes->get('tables/delete/(:num)', 'Admin\TableController::delete/$1');
 });
 

@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body">
                     <h3>Daftar Meja</h3>
-                    <a href="<?= base_url('tables/create') ?>" class="btn btn-primary btn-sm mb-3">
+                    <a href="<?= base_url('admin/tables/create') ?>" class="btn btn-primary btn-sm mb-3">
                         <i class="bi bi-plus-circle"></i> Tambah Meja
                     </a>
                     <div class="table-responsive">
@@ -27,12 +27,15 @@
                                         <td><?= $table['table_number'] ?></td>
                                         <td><?= ucfirst($table['status']) ?></td>
                                         <td>
-                                            <a href="<?= base_url('tables/edit/' . $table['id']) ?>" class="btn btn-primary btn-sm">
+                                            <a href="<?= base_url('admin/tables/edit/' . $table['id']) ?>" class="btn btn-primary btn-sm">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <button onclick="deleteTable(<?= $table['id'] ?>)" class="btn btn-danger btn-sm">
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
+                                            <a  onclick="showQr('<?= base_url('api/get/qr/' . $table['table_number']) ?>')" class="btn btn-secondary btn-sm">
+                                                <i class="bi bi-qr-code"></i> QR
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -44,7 +47,19 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalLabel">QR Code Meja</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body">
+        <img id="qrImage" src="" alt="QR Code" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>
 <script>
     function deleteTable(id) {
         Swal.fire({
@@ -56,10 +71,18 @@
             confirmButtonText: "Ya, hapus!"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "<?= base_url('tables/delete/') ?>" + id;
+                window.location.href = "<?= base_url('admin/tables/delete/') ?>" + id;
             }
         });
     }
 </script>
+<script>
+function showQr(qrUrl) {
+  document.getElementById('qrImage').src = qrUrl;
+  const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+  qrModal.show();
+}
+</script>
+
 
 <?= $this->endSection() ?>
