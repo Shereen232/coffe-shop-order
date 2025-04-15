@@ -30,6 +30,11 @@ $routes->group('api', function($routes) {
 // Menampilkan kategori produk pada /admin/category-product
 
 $routes->group('admin', function($routes) {
+    $routes->group('auth', function($routes){
+        $routes->get('login', 'Admin\AuthController::login');
+        $routes->post('login', 'Admin\AuthController::dologin');
+        $routes->post('logout', 'Admin\AuthController::logout');
+    });
     $routes->get('my-account', 'Admin\DashboardController::myAccount');
     $routes->get('/', 'Admin\DashboardController::index');
     $routes->get('products', 'Admin\ProductController::index');

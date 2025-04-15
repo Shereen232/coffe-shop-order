@@ -91,12 +91,12 @@
 
                 <!-- Logout Menu -->
                 <li class="sidebar-item">
-                    <form action="<?= base_url() ?>logout" method="GET" id="logout">
+                    <form action="<?= base_url('admin/auth/logout') ?>" method="POST" id="logout">
                         <?= csrf_field() ?>
-                        <a class="sidebar-link">
+                        <button class="sidebar-link bg-white border-0" type="submit" style="width: 100%; text-align: left;">
                             <i class="bi bi-box-arrow-left"></i>
                             <span>Logout</span>
-                        </a>
+                        </button>
                     </form>
                 </li>
             </ul>
