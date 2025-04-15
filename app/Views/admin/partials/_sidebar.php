@@ -3,7 +3,7 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="index.html"><img src="<?= base_url() ?>assets/images/pamsimas.png" style="width: 80px; height:80px" alt="Logo" srcset=""></a>
+                    <a href="#"><img src="<?= base_url('static/images/logo/favicon.jpg') ?>" style="width: 80px; height:80px" alt="Logo" class="rounded-circle" srcset=""></a>
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                     <!-- Theme toggle icon here -->
