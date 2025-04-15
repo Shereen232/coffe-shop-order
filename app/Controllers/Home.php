@@ -22,4 +22,16 @@ class Home extends BaseController
         $data['reviews'] = $reviewModel->asObject()->where('product_id', $id)->findAll();
         return view('customer/food/index.php', $data);
     }
+
+    public function contactUs(): string
+    {
+        $data['title'] = 'Kontak Kami';
+        return view('customer/contact_us.php', $data);
+    }
+
+    public function faq(): string
+    {
+        $data['title'] = 'FAQ';
+        return view('customer/faq.php', $data);
+    }
 }

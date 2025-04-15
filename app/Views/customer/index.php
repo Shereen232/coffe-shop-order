@@ -156,13 +156,16 @@
   
                   data.banners.forEach(banner => {
                       html += `
-                      <div class="swiper-slide">
+                      <div class="swiper-slide position-relative">
                         <div class="row banner-content p-5">
                           <div class="content-wrapper col-md-7">
-                            <div class="categories my-3">100% natural</div>
-                            <h3 class="display-4">${banner.name}</h3>
+                            <div class="categories my-3 fw-bold">Best Seller</div>
+                            <h4 class="display-5">${banner.name}</h4>
                             <p>${banner.description}</p>
-                            <a href="<?=base_url('product/')?>${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop Now</a>
+                            <div class="position-absolute m-3 badge bg-warning text-dark rounded-pill shadow" style="top: 50%; left: 55%;">
+                              <h1 style="font-size:3rem; padding:1rem 2rem;">Only 30k</h1>
+                            </div>
+                            <a href="<?=base_url('product/')?>${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Pesan</a>
                           </div>
                           <div class="img-wrapper col-md-5">
                             <img src="<?=base_url('uploads/products/')?>${banner.image}" class="img-fluid">
