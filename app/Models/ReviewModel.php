@@ -9,7 +9,7 @@ class ReviewModel extends Model
     protected $table            = 'reviews';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ['product_id','rating','name','comment'];

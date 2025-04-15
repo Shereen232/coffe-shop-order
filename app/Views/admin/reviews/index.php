@@ -34,11 +34,11 @@
                                     <?php foreach ($reviews as $key => $review) : ?>
                                         <tr>
                                             <td> <?= $key + 1 ?> </td>
-                                            <td> <?= $review['name'] ?> </td>
-                                            <td> <?= $review['rating'] ?> </td>
-                                            <td> <?= $review['comment'] ?> </td>
+                                            <td> <?= $review->name ?> </td>
+                                            <td> <?= $review->rating ?> </td>
+                                            <td> <?= $review->comment ?> </td>
                                             <td> 
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(<?= $review['id'] ?>)"> 
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(<?= $review->id ?>)"> 
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button> 
                                             </td>
