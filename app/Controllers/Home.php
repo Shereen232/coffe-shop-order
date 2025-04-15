@@ -9,6 +9,30 @@ class Home extends BaseController
 {
     public function index(): string
     {
+        $db = \Config\Database::connect();
+
+        $ip = $this->request->getIPAddress();
+        $today = date('Y-m-d');
+
+        $exists = $db->table('website_views')
+            ->where('ip_address', $ip)
+            ->where('DATE(viewed_at)', $today)
+            ->countAllResults();
+
+        if ($exists == 0) {
+            // Tambah 1 ke total_views
+            $db->table('view_counter')
+                ->where('id', 1)
+                ->set('total_views', 'total_views+1', false)
+                ->update();
+
+            // Tambahkan log kunjungan (opsional)
+            $db->table('website_views')->insert([
+                'ip_address' => $this->request->getIPAddress(),
+                'user_agent' => $this->request->getUserAgent()->getAgentString(),
+            ]);
+        }
+
         return view('customer/index.php');
     }
 
