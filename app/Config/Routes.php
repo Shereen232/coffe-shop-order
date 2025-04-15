@@ -5,6 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+$routes->get('auth/login', 'AuthController::login');
 $routes->get('/', 'Home::index');
 $routes->get('/product/(:num)', 'Home::show/$1');
 $routes->get('/kontak-kami', 'Home::contactUs');
