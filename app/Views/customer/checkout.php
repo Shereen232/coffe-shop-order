@@ -17,7 +17,7 @@
         <div class="card shadow-sm rounded-4 mb-4">
             <div class="card-body">
             <h5 class="fw-semibold mb-3">Metode Pembayaran</h5>
-            <form action="<?= base_url('checkout/process') ?>" method="post">
+            <form action="<?= base_url('checkout') ?>" method="post">
                 <!-- <div class="mb-3">
                 <label class="form-label">Nama Lengkap</label>
                 <input type="text" name="nama" class="form-control rounded-pill" required>
@@ -31,8 +31,8 @@
                 <textarea name="alamat" class="form-control rounded-4" rows="3" required></textarea>
                 </div> -->
                 <div class="form-check">
-                <input class="form-check-input" type="radio" name="metode_pembayaran" id="transfer" value="transfer" checked>
-                <label class="form-check-label" for="transfer">Transfer Bank</label>
+                <input class="form-check-input" type="radio" name="metode_pembayaran" id="cash" value="cash" checked>
+                <label class="form-check-label" for="cash">Cash</label>
                 </div>
                 <div class="form-check">
                 <input class="form-check-input" type="radio" name="metode_pembayaran" id="online_payment" value="online_payment">

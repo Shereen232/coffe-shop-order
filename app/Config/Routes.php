@@ -15,7 +15,10 @@ $routes->get('auth/logout', 'AuthController::logout');
 $routes->get('/product/(:num)', 'Home::show/$1');
 $routes->get('/kontak-kami', 'Home::contactUs');
 $routes->get('/faq', 'Home::faq');
-$routes->get('/checkout', 'PaymentController::checkout');
+$routes->get('/checkout', 'OrderController::checkout');
+$routes->post('/checkout', 'OrderController::prosesCheckout');
+$routes->get('/order/(:num)', 'OrderController::order/$1');
+$routes->get('order/struk/(:num)', 'OrderController::strukPDF/$1');
 $routes->group('api', function($routes) {
     $routes->post('(:num)/order', 'PaymentController::order/$1');
     $routes->get('categories', 'CategoryController::index');
