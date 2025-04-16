@@ -24,16 +24,16 @@
                     </div>
                     <h1 class="auth-title">Masuk.</h1>
                     <p class="auth-subtitle mb-5">Mohon masuk terlebih dahulu.</p>
-
+                    <p class="text-danger"><?= session()->getFlashdata('error'); ?></p>
                     <form action="<?= base_url('admin/auth/login') ?>" method="POST">
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" class="form-control form-control-xl" placeholder="Username">
+                            <input type="text" class="form-control form-control-xl" placeholder="Email" name="email" required>
                             <div class="form-control-icon">
                                 <i class="bi bi-person"></i>
                             </div>
                         </div>
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="password" class="form-control form-control-xl" placeholder="Password">
+                            <input type="password" class="form-control form-control-xl" placeholder="Password" name="password" required>
                             <div class="form-control-icon">
                                 <i class="bi bi-shield-lock"></i>
                             </div>

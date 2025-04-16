@@ -35,6 +35,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'redirectIfLoggedIn' => \App\Filters\RedirectIfLoggedIn::class,
+        'auth' => \App\Filters\AuthFilter::class,
     ];
 
     /**
