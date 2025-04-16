@@ -51,7 +51,7 @@
 
                 <!-- Order Management Menu -->
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>order-management">
+                    <a class="sidebar-link" href="<?= base_url() ?>admin/orders">
                         <i class="bi bi-cart"></i>
                         <span class="menu-title">Order Management</span>
                     </a>

@@ -64,6 +64,11 @@ $routes->group('admin', function($routes) {
         $routes->post('tables/update/(:num)', 'Admin\TableController::update/$1');
         $routes->get('tables/delete/(:num)', 'Admin\TableController::delete/$1');
     
+        $routes->group('orders', function($routes){
+            $routes->get('', 'Admin\OrderController::index');
+            $routes->post('delete/(:num)', 'Admin\OrderController::delete/$1');
+        });
+
         $routes->group('reviews', function($routes){
             $routes->get('', 'Admin\ReviewController::index');
             $routes->post('delete/(:num)', 'Admin\ReviewController::delete/$1');
