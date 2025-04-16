@@ -59,7 +59,7 @@
 
                 <!-- Payment Management Menu -->
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>payment-management">
+                    <a class="sidebar-link" href="<?= base_url('admin/payments') ?>">
                         <i class="bi bi-credit-card"></i>
                         <span class="menu-title">Payment Management</span>
                     </a>

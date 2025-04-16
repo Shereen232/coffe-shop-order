@@ -69,6 +69,11 @@ $routes->group('admin', function($routes) {
             $routes->post('delete/(:num)', 'Admin\OrderController::delete/$1');
         });
 
+        $routes->group('payments', function($routes){
+            $routes->get('', 'Admin\PaymentController::index');
+            $routes->post('delete/(:num)', 'Admin\PaymentController::delete/$1');
+        });
+
         $routes->group('reviews', function($routes){
             $routes->get('', 'Admin\ReviewController::index');
             $routes->post('delete/(:num)', 'Admin\ReviewController::delete/$1');
