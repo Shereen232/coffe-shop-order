@@ -29,6 +29,7 @@ $routes->group('api', function($routes) {
     $routes->post('(:num)/deleteitem', 'ProductController::deleteItem/$1');
     $routes->get('search', 'ProductController::search');
     $routes->get('get/qr/(:segment)', 'Admin\TableController::generateQr/$1');
+    $routes->post('status/payment', 'PaymentController::updateStatus');
 });
 // Menampilkan kategori produk pada /admin/category-product
 
@@ -39,7 +40,7 @@ $routes->group('admin', function($routes) {
         $routes->post('logout', 'Admin\AuthController::logout');
     });
     
-    $routes->group('', ['filter' => 'auth'], function($routes){
+    $routes->group('', function($routes){
         $routes->get('/', 'Admin\DashboardController::index');
         $routes->get('my-account', 'Admin\AuthController::myAccount');
         $routes->post('my-account/ubah-password', 'Admin\AuthController::changePassword');
@@ -66,6 +67,7 @@ $routes->group('admin', function($routes) {
     
         $routes->group('orders', function($routes){
             $routes->get('', 'Admin\OrderController::index');
+            $routes->get('get_detail/(:num)', 'Admin\OrderController::get_detail/$1');
             $routes->post('delete/(:num)', 'Admin\OrderController::delete/$1');
         });
 
@@ -77,6 +79,20 @@ $routes->group('admin', function($routes) {
         $routes->group('reviews', function($routes){
             $routes->get('', 'Admin\ReviewController::index');
             $routes->post('delete/(:num)', 'Admin\ReviewController::delete/$1');
+        });
+
+        $routes->group('users', function ($routes) {
+         $routes->get('', 'Admin\UserController::index');
+        $routes->get('create', 'Admin\UserController::create');
+        $routes->post('store', 'Admin\UserController::store');
+        $routes->get('edit/(:num)', 'Admin\UserController::edit/$1');
+        $routes->post('update/(:num)', 'Admin\UserController::update/$1');
+        $routes->get('delete/(:num)', 'Admin\UserController::delete/$1');
+        });
+
+        $routes->group('setting/payment', function($routes){
+            $routes->get('', 'Admin\SettingController::payment');
+            $routes->post('', 'Admin\SettingController::updatePayment');
         });
     });
 });

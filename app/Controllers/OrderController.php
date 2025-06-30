@@ -8,13 +8,14 @@ use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\PaymentModel;
 use App\Models\ProductModel;
+use App\Models\SettingModel;
 use App\Models\TableModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 class OrderController extends BaseController
 {
-    protected $productModel, $cartModel, $cartItemModel, $orderModel, $orderItemModel, $tableModel, $paymentModel;
+    protected $productModel, $cartModel, $cartItemModel, $orderModel, $orderItemModel, $tableModel, $paymentModel, $settingModel;
     public function __construct()
     {
         $this->productModel = new ProductModel();
@@ -24,12 +25,17 @@ class OrderController extends BaseController
         $this->orderItemModel = new OrderItemModel();
         $this->tableModel = new TableModel();
         $this->paymentModel = new PaymentModel();
+        $this->settingModel = new SettingModel();
     }
 
     public function checkout()
     {
+        $paymentSetting = $this->settingModel->getPaymentSetting();
         $sessionID = session('session')['table_id'] ?? null;
+
         if (!$sessionID) {
+            $currentURL = current_url();
+            session()->set('redirect_url', $currentURL);
             return redirect()->to('auth/login')->with('error', 'Silakan login terlebih dahulu!');
         }
         $cart = $this->cartModel
@@ -44,6 +50,7 @@ class OrderController extends BaseController
             'title' => 'Checkout',
             'orders' => $this->cartItemModel->select('cart_items.*, products.image, products.name')->where('cart_id', $cart->id)->join('products', 'cart_items.product_id = products.id')->findAll(),
             'total' => $cart->total,
+            'paymentSetting' => $paymentSetting,
         ];
 
         return view('customer/checkout', $data);
@@ -91,11 +98,20 @@ class OrderController extends BaseController
             // Hapus data cart-nya juga
             $this->cartModel->delete($cartModel->id);
 
+            $metode = $this->request->getPost('metode_pembayaran');
+
+            $snapToken = null;
+
+            if ($metode === 'online_payment') {
+                $snapToken = $this->getSnapToken($orderId, $cartModel->total, $cartModel->session_id);
+            }
+
             $this->paymentModel->save([
                 'order_id' => $orderId,
                 'payment_method' => $this->request->getPost('metode_pembayaran'),
                 'payment_status' => 'pending',
                 'transaction_id' => 'TRX-' . strtoupper(uniqid()),
+                'snaptoken'      => $snapToken,
             ]);
 
             // Commit transaksi
@@ -165,6 +181,29 @@ class OrderController extends BaseController
         $dompdf->render();
 
         $dompdf->stream('struk-order-' . $id . '.pdf', ['Attachment' => true]);
+    }
+
+    private function getSnapToken($orderID, $orderAmount, $orderTable)
+    {
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderID,
+                'gross_amount' => $orderAmount
+            ],
+            'customer_details' => [
+                'user_id' => $orderTable,
+                'email' => 'customer@example.com',
+            ]
+        ];
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);         
+
+        return $snapToken;
     }
     
 }

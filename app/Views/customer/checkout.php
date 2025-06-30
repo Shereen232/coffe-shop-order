@@ -30,14 +30,18 @@
                 <label class="form-label">Alamat Lengkap</label>
                 <textarea name="alamat" class="form-control rounded-4" rows="3" required></textarea>
                 </div> -->
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="metode_pembayaran" id="cash" value="cash" checked>
-                <label class="form-check-label" for="cash">Cash</label>
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="metode_pembayaran" id="online_payment" value="online_payment">
-                <label class="form-check-label" for="online_payment">Online Payment</label>
-                </div>
+                <?php foreach ($paymentSetting as $key => $setting) : ?>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metode_pembayaran" id="<?= $setting ?>" value="<?= $setting ?>">
+                        <label class="form-check-label" for="<?= $setting ?>">
+                            <?php if ($setting === 'cash_on_delivery') : ?>
+                                Cash
+                            <?php else: ?>
+                                Online Payment
+                            <?php endif; ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
 
                 <!-- Tombol Checkout -->
                 <div class="mt-4">

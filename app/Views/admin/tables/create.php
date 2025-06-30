@@ -13,14 +13,14 @@
                             <label for="table_number">Nomor Meja</label>
                             <input type="text" class="form-control" name="table_number" required>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="status">Status</label>
                             <select name="status" class="form-control">
                                 <option value="available">Tersedia</option>
                                 <option value="occupied">Terpakai</option>
                                 <option value="reserved">Dipesan</option>
                             </select>
-                        </div>
+                        </div> -->
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
                 </div>

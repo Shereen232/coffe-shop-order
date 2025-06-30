@@ -21,7 +21,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-end">
                             <a href="<?= base_url() ?>admin/product/create">
-                                <button type="button" class="btn btn-primary btn-sm mb-3">
+                                <button type="button" class="btn btn-primary btn-m mb-3">
                                     <i class="bi bi-plus-circle"></i> Tambah Produk 
                                 </button>
                             </a>

@@ -67,177 +67,215 @@
         </div>
       </div>
     </section>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      $(document).ready(function () {
 
-        function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0, // Menghilangkan angka di belakang koma
-                maximumFractionDigits: 0
-            }).format(angka);
-        }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
 
-        function reloadProducts(category = null)
-        {
-          $.ajax({
-              url: '<?= base_url() ?>api/products',
-              method: 'GET',
-              dataType: 'json',
-              data: { category: category },
-              success: function (data) {
-                  const contentParent = $('.products-container');
-                  
-                  let html = "";
-  
-                  if (data.products && data.products.length > 0) {
-                    data.products.forEach(product => {
-                      html += `
-                      <div class="col-6 col-md-3 col-lg-2">
-                        <div class="product-item">
-                          <span class="badge bg-success position-absolute m-3">${product.price_discount <= 0 ? '' : '-'+product.price_discount+'%'}</span>
-                          <a href="<?= base_url() ?>product/${product.id}">
-                          <figure style="overflow:hidden;">
-                              <img src="<?=base_url('uploads/products/')?>${product.image}" class="tab-image">
-                          </figure>
-                          </a>
-                          <h3>${product.name}</h3>
-                          <span class="qty">1 Unit</span>
-                          <span class="rating">
-                            <svg width="24" height="24" class="text-primary">
-                              <use xlink:href="#star-solid"></use>
-                            </svg> 4.5
-                          </span>
-                          <span class="price">${formatRupiah(product.price)}</span>
-                          <div class="d-flex align-items-center justify-content-between">
-                            <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                  <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                                </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                  <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                                </button>
-                              </span>
-                            </div>
-                            <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-                          </div>
-                        </div>
-                      </div>`;
-                    });
-                  } else {
-                      // Tampilkan pesan kalau produk kosong
-                      html = '<p class="text-center">Produk tidak ditemukan.</p>';
-                  }
-  
-                  contentParent.html(html);
-              },
-              error: function (xhr, status, error) {
-                  console.error('Terjadi kesalahan saat mengambil data:', error);
-              }
-          });
-        }reloadProducts();
+      function formatRupiah(angka) {
+          return new Intl.NumberFormat('id-ID', {
+              style: 'currency',
+              currency: 'IDR',
+              minimumFractionDigits: 0, // Menghilangkan angka di belakang koma
+              maximumFractionDigits: 0
+          }).format(angka);
+      }
 
-        function getBanners()
-        {
-          $.ajax({
-              url: '<?= base_url() ?>api/banners',
-              method: 'GET',
-              dataType: 'json',
-              success: function (data) {
-                  const contentParent = $('#product-banners');
-                  
-                  let html = "";
-  
-                  data.banners.forEach(banner => {
-                      html += `
-                      <div class="swiper-slide position-relative">
-                        <div class="row banner-content p-5">
-                          <div class="content-wrapper col-md-7">
-                            <div class="categories my-3 fw-bold">Best Seller</div>
-                            <h4 class="display-5">${banner.name}</h4>
-                            <p>${banner.description}</p>
-                            <div class="position-absolute m-3 badge bg-warning text-dark rounded-pill shadow" style="top: 50%; left: 55%;">
-                              <h1 style="font-size:3rem; padding:1rem 2rem;">Only 30k</h1>
-                            </div>
-                            <a href="<?=base_url('product/')?>${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Pesan</a>
-                          </div>
-                          <div class="img-wrapper col-md-5">
-                            <img src="<?=base_url('uploads/products/')?>${banner.image}" class="img-fluid">
-                          </div>
-                        </div>
-                      </div>`;
-                    });
-  
-                  contentParent.html(html);
-              },
-              error: function (xhr, status, error) {
-                  console.error('Terjadi kesalahan saat mengambil data:', error);
-              }
-          });
-        }getBanners();
+      function reloadProducts(category = null) {
+        $.ajax({
+          url: '<?= base_url() ?>api/products',
+          method: 'GET',
+          dataType: 'json',
+          data: { category: category },
+          success: function (data) {
+            const contentParent = $('.products-container');
+            let html = "";
 
-        function getCategories()
-        {
-          $.ajax({
-              url: '<?= base_url() ?>api/categories',
-              method: 'GET',
-              dataType: 'json',
-              success: function (data) {
-                  const contentParent = $('.categories-container');
-                  
-                  let html = "";
-  
-                  data.categories.forEach(category => {
-                      html += `
-                      <div class="col-4 col-md-3 col-lg-2">
-                        <div class="product-item d-flex flex-column align-items-center justify-content-center text-center">
-                          <button data-id="${category.id}" class="nav-link category-item swiper-slide pt-2 pb-2">
-                            <img src="<?=base_url() ?>${category.image}" alt="${category.nama_category}">
-                            <h3 class="category-title">${category.nama_category}</h3>
+            if (data.products && data.products.length > 0) {
+              data.products.forEach(product => {
+                const qtyInputId = `quantity-${product.id}`;
+                const minusBtnId = `minus-${product.id}`;
+                const plusBtnId = `plus-${product.id}`;
+
+                html += `
+                <div class="col-6 col-md-3 col-lg-2">
+                  <div class="product-item">
+                    <span class="badge bg-success position-absolute m-3">${product.price_discount <= 0 ? '' : '-' + product.price_discount + '%'}</span>
+                    <a href="<?= base_url() ?>product/${product.id}">
+                      <figure style="overflow:hidden;">
+                        <img src="<?= base_url('uploads/products/') ?>${product.image}" class="tab-image">
+                      </figure>
+                    </a>
+                    <h3>${product.name}</h3>
+                    <span class="qty">1 Unit</span>
+                    <span class="price">${formatRupiah(product.price)}</span>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="input-group product-qty">
+                        <span class="input-group-btn">
+                          <button type="button" id="${minusBtnId}" class="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-id="${product.id}">
+                            <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
                           </button>
-                      </div></div>`;
-                    });
-  
-                  contentParent.html(html);
-              },
-              error: function (xhr, status, error) {
-                  console.error('Terjadi kesalahan saat mengambil data:', error);
-              }
-          });
-        }getCategories();
-
-        $(document).on('click', '.category-item', function(e) {
-          e.preventDefault();
-           // Hapus kelas active dari semua kategori
-          $('.category-item').removeClass('active-category');
-
-          // Tambahkan kelas active pada yang diklik
-          $(this).addClass('active-category');
-
-          const id = $(this).data('id');
-        
-          if (id) {
-            reloadProducts(id);
-          } else {
-            reloadProducts();
-          }
-
-          const productSection = document.getElementById('products-section');
-          if (productSection) {
-              productSection.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'center'
+                        </span>
+                        <input type="text" id="${qtyInputId}" name="quantity" class="form-control input-number" value="1" min="1" max="${product.stock}">
+                        <span class="input-group-btn">
+                          <button type="button" id="${plusBtnId}" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-id="${product.id}">
+                            <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+                          </button>
+                        </span>
+                      </div>
+                      <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></button>
+                    </div>
+                  </div>
+                </div>
+                `;
               });
+            } else {
+              html = '<p class="text-center">Produk tidak ditemukan.</p>';
+            }
+
+            contentParent.html(html);
+
+            // Setelah elemen dimuat, pasang event listener untuk setiap produk
+            if (data.products && data.products.length > 0) {
+              data.products.forEach(product => {
+                const qtyInput = document.getElementById(`quantity-${product.id}`);
+                const minusBtn = document.getElementById(`minus-${product.id}`);
+                const plusBtn = document.getElementById(`plus-${product.id}`);
+                const maxStock = parseInt(product.stock);
+
+                minusBtn.addEventListener('click', () => {
+                  let val = parseInt(qtyInput.value) || 1;
+                  qtyInput.value = val > 1 ? val - 1 : 1;
+                  setValue(product.id, qtyInput.value)
+                });
+
+                plusBtn.addEventListener('click', () => {
+                  let val = parseInt(qtyInput.value) || 1;
+                  qtyInput.value = val < maxStock ? val + 1 : maxStock;
+                  setValue(product.id, qtyInput.value)
+                });
+
+                qtyInput.addEventListener('input', () => {
+                  let val = parseInt(qtyInput.value);
+                  if (isNaN(val) || val < 1) {
+                    qtyInput.value = 1;
+                  } else if (val > maxStock) {
+                    qtyInput.value = maxStock;
+                  }
+                });                
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error('Terjadi kesalahan saat mengambil data:', error);
           }
         });
+      }
 
+      function setValue($id, val)
+      {
+        const qtyInput = document.querySelector(`#btn-addchart[data-id="${$id}"]`);
+        qtyInput.setAttribute('data-qty', val);
+      }
+
+      function getBanners()
+      {
+        $.ajax({
+            url: '<?= base_url() ?>api/banners',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                const contentParent = $('#product-banners');
+                
+                let html = "";
+
+                data.banners.forEach(banner => {
+                    html += `
+                    <div class="swiper-slide position-relative">
+                      <div class="row banner-content p-5">
+                        <div class="content-wrapper col-md-7">
+                          <div class="categories my-3 fw-bold">Best Seller</div>
+                          <h4 class="display-5">${banner.name}</h4>
+                          <p>${banner.description}</p>
+                          <div class="position-absolute m-3 badge bg-warning text-dark rounded-pill shadow" style="top: 50%; left: 55%;">
+                            <h1 style="font-size:3rem; padding:1rem 2rem;">Only 30k</h1>
+                          </div>
+                          <a href="<?=base_url('product/')?>${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Pesan</a>
+                        </div>
+                        <div class="img-wrapper col-md-5">
+                          <img src="<?=base_url('uploads/products/')?>${banner.image}" class="img-fluid">
+                        </div>
+                      </div>
+                    </div>`;
+                  });
+
+                contentParent.html(html);
+            },
+            error: function (xhr, status, error) {
+                console.error('Terjadi kesalahan saat mengambil data:', error);
+            }
+        });
+      }getBanners();
+
+      function getCategories()
+      {
+        $.ajax({
+            url: '<?= base_url() ?>api/categories',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                const contentParent = $('.categories-container');
+                
+                let html = "";
+
+                data.categories.forEach(category => {
+                    html += `
+                    <div class="col-4 col-md-3 col-lg-2">
+                      <div class="product-item d-flex flex-column align-items-center justify-content-center text-center">
+                        <button data-id="${category.id}" class="nav-link category-item swiper-slide pt-2 pb-2">
+                          <img src="<?=base_url() ?>${category.image}" alt="${category.nama_category}">
+                          <h3 class="category-title">${category.nama_category}</h3>
+                        </button>
+                    </div></div>`;
+                  });
+
+                contentParent.html(html);
+            },
+            error: function (xhr, status, error) {
+                console.error('Terjadi kesalahan saat mengambil data:', error);
+            }
+        });
+      }getCategories();
+
+      $(document).on('click', '.category-item', function(e) {
+        e.preventDefault();
+          // Hapus kelas active dari semua kategori
+        $('.category-item').removeClass('active-category');
+
+        // Tambahkan kelas active pada yang diklik
+        $(this).addClass('active-category');
+
+        const id = $(this).data('id');
+      
+        if (id) {
+          reloadProducts(id);
+        } else {
+          reloadProducts();
+        }
+
+        const productSection = document.getElementById('products-section');
+        if (productSection) {
+            productSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
       });
-    </script>
+
+      $(document).ready(function() {
+        reloadProducts();
+      });
+  });
+</script>
 <?= $this->endSection() ?>
   

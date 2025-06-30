@@ -13,14 +13,14 @@
                             <label for="table_number">Nomor Meja</label>
                             <input type="text" class="form-control" name="table_number" value="<?= $table['table_number'] ?>" required>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="status">Status</label>
                             <select name="status" class="form-control">
                                 <option value="available" <?= $table['status'] == 'available' ? 'selected' : '' ?>>Tersedia</option>
                                 <option value="occupied" <?= $table['status'] == 'occupied' ? 'selected' : '' ?>>Terpakai</option>
                                 <option value="reserved" <?= $table['status'] == 'reserved' ? 'selected' : '' ?>>Dipesan</option>
                             </select>
-                        </div>
+                        </div> -->
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
                 </div>

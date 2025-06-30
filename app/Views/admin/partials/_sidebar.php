@@ -58,28 +58,35 @@
                 </li>
 
                 <!-- Payment Management Menu -->
-                <li class="sidebar-item">
+                <!-- <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url('admin/payments') ?>">
                         <i class="bi bi-credit-card"></i>
                         <span class="menu-title">Payment Management</span>
                     </a>
-                </li>
+                </li> -->
 
                 <!-- Review Management Menu -->
-                <li class="sidebar-item">
+                <!-- <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/reviews">
                         <i class="bi bi-star"></i>
                         <span class="menu-title">Review Management</span>
                     </a>
+                </li> -->
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="<?= base_url() ?>admin/users">
+                        <i class="bi bi-people"></i>
+                        <span class="menu-title">User Management</span>
+                    </a>
                 </li>
 
                 <!-- Reports Menu -->
-                <!-- <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>reports">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="<?= base_url() ?>admin/setting/payment">
                         <i class="bi bi-file-earmark-bar-graph"></i>
-                        <span class="menu-title">Reports</span>
+                        <span class="menu-title">Setting</span>
                     </a>
-                </li> -->
+                </li>
 
                 <!-- Profile Menu -->
                 <li class="sidebar-item">

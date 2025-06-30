@@ -38,9 +38,17 @@
       <!-- Qty -->
       <div class="d-flex align-items-center mb-3">
         <span class="me-2">Qty:</span>
-        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3">−</button>
-        <span class="mx-2">1</span>
-        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3">+</button>
+        <span class="input-group-btn">
+          <button type="button" id="btn-minus" class="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-id="<?= $product->price?>">
+            <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
+          </button>
+        </span>
+        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="<?= $product->stock ?>">
+        <span class="input-group-btn">
+          <button type="button" id="btn-plus" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-id="<?= $product->price?>">
+            <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+          </button>
+        </span>
       </div>
 
       <!-- Tombol Tambah -->
@@ -58,10 +66,10 @@
 
   <!-- Ulasan Produk -->
   <div class="mt-5">
-    <h4 class="mb-4">Ulasan Produk</h4>
+    <!-- <h4 class="mb-4">Ulasan Produk</h4> -->
 
     <!-- Dummy review loop -->
-    <div class="list-group">
+    <!-- <div class="list-group">
       <?php if ($reviews == null) echo '<div>Belum ada ulasan untuk produk ini.</div>'; ?>
       <?php foreach ($reviews as $key => $review) : ?>
       <?php $timestamp = strtotime($review->created_at); ?>
@@ -97,7 +105,7 @@
         </div>
       </div>
       <?php endforeach; ?>
-    </div>
+    </div> -->
 
     <!-- Tombol Tambah Ulasan -->
     <!-- <div class="mt-4">
@@ -105,5 +113,30 @@
     </div> -->
   </div>
 </div>
+
+<script>
+    const qtyInput = document.getElementById("quantity");
+    const minusBtn = document.getElementById('btn-minus');
+    const plusBtn = document.getElementById('btn-plus');
+    const maxStock = "<?= $product->stock ?>";
+
+    minusBtn.addEventListener('click', () => {
+      let val = parseInt(qtyInput.value) || 1;
+      qtyInput.value = val > 1 ? val - 1 : 1;
+      setValue(qtyInput.value)
+    });
+
+    plusBtn.addEventListener('click', () => {
+      let val = parseInt(qtyInput.value) || 1;
+      qtyInput.value = val < maxStock ? val + 1 : maxStock;
+      setValue(qtyInput.value)
+    });
+
+    function setValue(val)
+    {
+      const qtyInput = document.querySelector(`#btn-addchart`);
+      qtyInput.setAttribute('data-qty', val);
+    }
+</script>
 <?= $this->endSection() ?>
   

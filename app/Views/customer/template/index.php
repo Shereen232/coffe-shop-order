@@ -26,6 +26,14 @@
     </style>
   </head>
   <body>
+    <!-- Modal Snap bisa kamu tempatkan jika pakai embed -->
+    <div class="modal fade" id="modalBooking" tabindex="-1" aria-labelledby="modalBookingLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content" style="height: 100vh;">
+          <div id="snap-container" style="width: 100%; height:100%"></div>
+        </div>
+      </div>
+    </div>
     <div id="cart-toast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg small-toast" role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 999;">
       <div class="d-flex">
         <div class="toast-body d-flex align-items-center gap-2">
@@ -77,7 +85,7 @@
               carts.forEach(product => {
                 html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                       <div>
-                          <h6 class="my-0">${product.name}</h6>
+                          <h6 class="my-0">${product.name} x${product.qty}</h6>
                       </div>
                       <div class="d-flex align-items-center">
                           <span class="text-body-secondary me-3">${formatRupiah(product.subtotal)}</span>

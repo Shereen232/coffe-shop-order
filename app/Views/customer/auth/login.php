@@ -52,6 +52,8 @@
                 </select>
             </div>
 
+            <button id="btn-login" class="btn btn-secondary">Masuk</button>
+
             </div>
         </div>
     </div>
@@ -93,11 +95,21 @@
         $('#select-meja').change(function() {
             const selectedValue = $(this).val();
             if (selectedValue) {
+                // Set data Login
+                const btnLogin = document.getElementById('btn-login');
+                btnLogin.setAttribute('data-qr', selectedValue);
+                
                 // Mengambil QR Code untuk meja yang dipilih
                 fetchQRCode(selectedValue);
             }else{
               $('#qrCodeContainer').html('');
             }
+        });
+
+        $('#btn-login').click(function() {
+            const qrValue = $(this).data('qr');
+            const url = "<?= env('LOGIN_URL') ?>/"+qrValue;
+            window.location.href = url;
         });
     });
     </script>

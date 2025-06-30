@@ -57,6 +57,10 @@ class AuthController extends BaseController
         $table['status'] = 'occupied';
         $this->tableModel->update($table['id'], $table);
 
+        $sessRedirect = session()->get('redirect_url');
+
+        if ($sessRedirect) return redirect()->to($sessRedirect)->with('success', 'Berhasil login!');
+
         return redirect()->to('/')->with('success', 'Berhasil login!');
     }
 

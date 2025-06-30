@@ -11,6 +11,7 @@ class Home extends BaseController
     {
         $db = \Config\Database::connect();
 
+        // Hitung view unik per IP per hari
         $ip = $this->request->getIPAddress();
         $today = date('Y-m-d');
 
@@ -20,21 +21,26 @@ class Home extends BaseController
             ->countAllResults();
 
         if ($exists == 0) {
-            // Tambah 1 ke total_views
+            // Tambah ke total_views
             $db->table('view_counter')
                 ->where('id', 1)
                 ->set('total_views', 'total_views+1', false)
                 ->update();
 
-            // Tambahkan log kunjungan (opsional)
+            // Simpan log pengunjung
             $db->table('website_views')->insert([
-                'ip_address' => $this->request->getIPAddress(),
+                'ip_address' => $ip,
                 'user_agent' => $this->request->getUserAgent()->getAgentString(),
             ]);
         }
 
-        return view('customer/index.php');
+        // 🔽 Tambahan: Ambil semua produk
+        $products = $db->table('products')->get()->getResultArray();
+
+        // Kirim data produk ke view
+        return view('customer/index.php', ['products' => $products]);
     }
+
 
     public function show($id)
     {

@@ -12,7 +12,7 @@ class PaymentModel extends Model
     protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['order_id','payment_method','payment_status','transaction_id'];
+    protected $allowedFields    = ['order_id','payment_method','payment_status','transaction_id','snaptoken'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

@@ -1,5 +1,6 @@
 <?= $this->extend('Customer/template/index.php') ?>
 <?= $this->section('app') ?>
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?= env('MIDTRANS_CLIENT_KEY') ?>"></script>
 <div class="container py-5">
     <!-- Tombol Kembali -->
     <div class="mb-4">
@@ -33,9 +34,13 @@
                 </div>
             </div>
             <?php if ($order->status == 'pending'): ?>
-                <div class="alert alert-warning" role="alert">
-                    Silakan lakukan pembayaran di kasir untuk menyelesaikan pesanan Anda.
-                </div>
+                <?php if ($order->payment->payment_method === 'online_payment') : ?>
+                    <div id="btn-bayar" class="btn btn-primary" data-trx="<?= $order->payment->transaction_id ?>" data-snaptoken="<?= $order->payment->snaptoken ?>">Bayar</div>
+                <?php else: ?>
+                    <div class="alert alert-warning" role="alert">
+                        Silakan lakukan pembayaran di kasir untuk menyelesaikan pesanan Anda.
+                    </div>
+                <?php endif; ?>
             <?php elseif ($order->status == 'processing'): ?>
                 <div class="alert alert-success" role="alert">
                     Pembayaran Anda telah diterima. Terima kasih telah berbelanja!
@@ -80,4 +85,70 @@
         </div>
     </div>
 </div>
+
+<script>
+document.querySelectorAll('#btn-bayar').forEach(function(btn) {
+    btn.addEventListener('click', function () {
+        const trxId = btn.dataset.trx;
+        const snapToken = btn.dataset.snaptoken;
+        const url = "<?= base_url('api/status/payment?trx=') ?>"+trxId;
+        
+        const modalEl = document.getElementById('modalBooking');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+        // Trigger snap popup. @TODO: Replace TRANSACTION_TOKEN_HERE with your transaction token.
+        // Also, use the embedId that you defined in the div above, here.
+        window.snap.embed(snapToken, {
+            embedId: 'snap-container',
+            onSuccess: function (result) {
+              // Kirim ke server untuk update status
+              fetch(url, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                      "X-CSRF-TOKEN": "<?= csrf_hash() ?>"
+                  },
+                  body: JSON.stringify({
+                      order_id: result.order_id,
+                      transaction_status: result.transaction_status,
+                      payment_type: result.payment_type,
+                      gross_amount: result.gross_amount
+                  })
+              })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Gagal mengupdate status di server");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Status pembayaran diperbarui:", data);
+                modal.hide();
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                modal.hide();
+                alert("Terjadi kesalahan saat mengupdate status ke server.");
+            });
+          },
+          onPending: function (result) {
+              /* You may add your own implementation here */
+              modal.hide();
+              alert("wating your payment!"); console.log(result);
+          },
+          onError: function (result) {
+            modal.hide();
+              /* You may add your own implementation here */
+              alert("payment failed!"); console.log(result);
+          },
+          onClose: function () {
+            modal.hide();
+              /* You may add your own implementation here */
+              alert('you closed the popup without finishing the payment');
+          }
+        });
+    });
+});
+</script>
 <?= $this->endSection() ?>
