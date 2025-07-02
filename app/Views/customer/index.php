@@ -200,14 +200,15 @@
                           <div class="position-absolute m-3 badge bg-warning text-dark rounded-pill shadow" style="top: 50%; left: 55%;">
                             <h1 style="font-size:3rem; padding:1rem 2rem;">Only 30k</h1>
                           </div>
-                          <a href="<?=base_url('product/')?>${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Pesan</a>
+                          <a href="${baseUrl}product/${banner.product_id}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Pesan</a>
                         </div>
                         <div class="img-wrapper col-md-5">
-                          <img src="<?=base_url('uploads/products/')?>${banner.image}" class="img-fluid">
+                          <img src="${baseUrl}uploads/category/${banner.image}" class="img-fluid">
                         </div>
                       </div>
                     </div>`;
-                  });
+                });
+
 
                 contentParent.html(html);
             },
@@ -233,7 +234,7 @@
                     <div class="col-4 col-md-3 col-lg-2">
                       <div class="product-item d-flex flex-column align-items-center justify-content-center text-center">
                         <button data-id="${category.id}" class="nav-link category-item swiper-slide pt-2 pb-2">
-                          <img src="<?=base_url() ?>${category.image}" alt="${category.nama_category}">
+                          <img src="<?=base_url() ?>/uploads/category/${category.image}" alt="${category.nama_category}">
                           <h3 class="category-title">${category.nama_category}</h3>
                         </button>
                     </div></div>`;

@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 
 namespace App\Controllers\Admin; // Sesuaikan namespace jika berbeda
 
@@ -26,6 +25,10 @@ class OrderController extends BaseController
 
     public function index()
     {
+        // Ambil tanggal dari parameter GET
+        $startDate = $this->request->getGet('start_date');
+        $endDate = $this->request->getGet('end_date');
+
         // 1. Mengambil semua data pesanan (orders)
         // Join dengan tabel 'tables' untuk mendapatkan nomor meja
         // Pastikan 'orders.user_id' adalah kolom yang berelasi dengan 'tables.id' (atau 'tables.table_id' jika nama kolomnya berbeda)
@@ -33,16 +36,28 @@ class OrderController extends BaseController
         // benar-benar merujuk ke ID dari tabel (misalnya, jika user_id adalah id dari user yang memesan,
         // dan user tersebut dikaitkan dengan meja, maka relasinya benar. Jika orders.table_id yang merujuk ke meja,
         // maka join harus diubah menjadi orders.table_id = tables.id).
-        $orders = $this->orderModel
+        $query = $this->orderModel
                      ->select('orders.*, tables.table_number') // Select orders.* untuk semua kolom order, dan table_number dari tabel
-                     ->join('tables', 'orders.user_id = tables.id') // Perbaiki jika relasi berbeda
-                     ->findAll();
+                     ->join('tables', 'orders.user_id = tables.id'); // Perbaiki jika relasi berbeda
+
+        // Terapkan filter tanggal jika ada
+        if (!empty($startDate)) {
+            // Tambahkan waktu awal hari untuk tanggal mulai
+            $query->where('orders.created_at >=', $startDate . ' 00:00:00');
+        }
+        if (!empty($endDate)) {
+            // Tambahkan waktu akhir hari untuk tanggal akhir
+            $query->where('orders.created_at <=', $endDate . ' 23:59:59');
+        }
+        
+        $orders = $query->orderBy('orders.created_at', 'DESC')->findAll(); // Jalankan query setelah menerapkan filter
 
         // 2. Mengambil semua item pesanan (order_items) dan menggabungkannya dengan produk
         $orderItems = $this->orderItemModel
-                           ->select('order_items.*, products.name AS product_name, products.image, products.price')
-                           ->join('products', 'products.id = order_items.product_id')
-                           ->findAll();
+                            ->select('order_items.*, products.name AS product_name, products.image, products.price')
+                            ->join('products', 'products.id = order_items.product_id')
+                            ->orderBy('created_at', 'DESC')
+                            ->findAll();
 
         // 3. Mengelompokkan item pesanan berdasarkan order_id
         $groupedItems = [];
@@ -64,7 +79,8 @@ class OrderController extends BaseController
 
         $data['title'] = 'Data Pesanan Produk'; // Judul halaman
         $data['orders'] = $orders; // Data pesanan yang sudah digabungkan dengan item dan info meja/pembayaran
-        // $data['payments'] = $payments; // Hanya sertakan jika Anda ingin mengakses payments secara terpisah
+        $data['start_date'] = $startDate; // Kirim kembali tanggal untuk mengisi form
+        $data['end_date'] = $endDate;     // Kirim kembali tanggal untuk mengisi form
 
         return view('admin/order/index', $data); // Menampilkan data di view admin/order/index
     }
@@ -93,10 +109,10 @@ class OrderController extends BaseController
 
         // Ambil item pesanan yang terkait dengan pesanan ini
         $order->items = $this->orderItemModel
-                              ->select('order_items.*, products.name AS product_name, products.image, products.price')
-                              ->join('products', 'products.id = order_items.product_id')
-                              ->where('order_id', $order->id)
-                              ->findAll();
+                               ->select('order_items.*, products.name AS product_name, products.image, products.price')
+                               ->join('products', 'products.id = order_items.product_id')
+                               ->where('order_id', $order->id)
+                               ->findAll();
 
         // Ambil informasi pembayaran
         $order->payment = $this->paymentModel->where('order_id', $order->id)->first();
@@ -107,4 +123,38 @@ class OrderController extends BaseController
             'data' => $order
         ]);
     }
+
+    public function payCash($id = null)
+    {
+        if ($id === null) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID Pesanan tidak ditemukan.'
+            ]);
+        }
+
+        try {
+            // Update status order ke 'processing'
+            $this->orderModel->update($id, [
+                'status' => 'processing'
+            ]);
+
+            // Update payment status ke 'settlement'
+            $this->paymentModel->where('order_id', $id)->set([
+                'payment_status' => 'settlement'
+            ])->update();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Pembayaran berhasil dilakukan.'
+            ]);
+        } catch (\Exception $e) {
+            // Tangkap kesalahan dan kembalikan respons error
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
+    }
+
 }

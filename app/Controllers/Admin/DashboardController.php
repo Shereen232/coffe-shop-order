@@ -27,11 +27,20 @@ class DashboardController extends BaseController
         ->orderBy('created_at', 'DESC')
         ->findAll(5);
 
+        $latestOrders = $db->table('orders')
+        ->select('orders.*, tables.table_number')
+        ->join('tables', 'tables.id = orders.user_id')
+        ->orderBy('orders.created_at', 'DESC')
+        ->limit(5)
+        ->get();
+
+
         $data['title'] = 'Dashboard Admin';
         $data['total_views'] = $totalViews;
         $data['total_products'] = $products->get()->getRow()->total_products;
         $data['total_orders'] = 0;
         $data['total_payments'] = 0;
+        $data['latest_orders'] = $latestOrders->getResult();
         $data['reviews'] = $reviews;
         return view('admin/index.php', $data);
     }

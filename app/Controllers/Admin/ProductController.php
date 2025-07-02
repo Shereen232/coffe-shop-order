@@ -18,10 +18,16 @@ class ProductController extends BaseController
     // Menampilkan daftar produk
     public function index()
     {
-        $data['categories'] = $this->categoryModel->findAll();  // Mengambil kategori produk
-        $data['products'] = $this->productModel->findAll();
+        $data['categories'] = $this->categoryModel->findAll();
+
+        $data['products'] = $this->productModel
+            ->select('products.*, category_product.nama_category as category_nama_category')
+            ->join('category_product', 'category_product.id = products.category_id', 'left')
+            ->findAll();
+
         return view('admin/product/index', $data);
     }
+
 
     // Menampilkan form tambah produk
     public function create()

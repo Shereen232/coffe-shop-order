@@ -25,35 +25,35 @@
                     </a>
                 </li>
 
-                 <!-- Category Product Menu -->
+                 <!-- >Kategori Produk Menu -->
                  <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/category-product">
                         <i class="bi bi-archive"></i>
-                        <span class="menu-title">Category Product</span>
+                        <span class="menu-title">Kategori Produk</span>
                     </a>
                 </li>
 
-                <!-- Product Management Menu -->
+                <!-- Manajemen Produk Menu -->
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/products">
                         <i class="bi bi-box"></i>
-                        <span class="menu-title">Product Management</span>
+                        <span class="menu-title">Manajemen Produk</span>
                     </a>
                 </li>
 
-                <!-- Table Management Menu -->
+                <!-- Manajemen Meja Menu -->
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/tables">
                         <i class="bi bi-table"></i>
-                        <span class="menu-title">Table Management</span>
+                        <span class="menu-title">Manajemen Meja</span>
                     </a>
                 </li>
 
-                <!-- Order Management Menu -->
+                <!-- Manajemen Pesanan Menu -->
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/orders">
                         <i class="bi bi-cart"></i>
-                        <span class="menu-title">Order Management</span>
+                        <span class="menu-title">Manajemen Pesanan</span>
                     </a>
                 </li>
 
@@ -76,7 +76,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/users">
                         <i class="bi bi-people"></i>
-                        <span class="menu-title">User Management</span>
+                        <span class="menu-title">Manajemen Pengguna</span>
                     </a>
                 </li>
 
@@ -84,7 +84,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?= base_url() ?>admin/setting/payment">
                         <i class="bi bi-file-earmark-bar-graph"></i>
-                        <span class="menu-title">Setting</span>
+                        <span class="menu-title">Pengaturan</span>
                     </a>
                 </li>
 

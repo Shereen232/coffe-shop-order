@@ -23,7 +23,7 @@
                         <li><strong>Metode Pembayaran:</strong> <?= $order->payment->payment_method ?></li>
                         <li><strong>Status:</strong> <?php if ($order->payment->payment_status == 'pending') {
                             echo '<span class="badge bg-warning text-dark">Menunggu Pembayaran</span>';
-                        }else if ($order->payment->payment_status == 'paid') {
+                        }else if ($order->payment->payment_status == 'settlement') {
                             echo '<span class="badge bg-success">Pembayaran Diterima</span>';
                         }else if ($order->payment->payment_status == 'failed') {
                             echo '<span class="badge bg-danger">Pesanan Dibatalkan</span>';

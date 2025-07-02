@@ -11,7 +11,7 @@ class CategoryModel extends Model
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['nama_category'];
+    protected $allowedFields = ['nama_category','image'];
 
     // Menambahkan validation rules jika diperlukan
     protected $validationRules = [

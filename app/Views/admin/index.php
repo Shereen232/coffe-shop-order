@@ -105,18 +105,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td colspan="3" class="text-center"><i>belum ada data pesanan.</i></td>
-                                            <!-- <td class="col-3">
-                                                <p class="font-bold ms-3 mb-0">T01</p>
-                                            </td>
-                                            <td class="col-auto">
-                                                <p class="mb-0">Rp. 50.000</p>
-                                            </td>
-                                            <td class="col-auto">
-                                                <p class="mb-0">1 menit yang lalu</p>
-                                            </td> -->
-                                        </tr>
+                                        <?php if (count($latest_orders) > 0): ?>
+                                            <?php foreach ($latest_orders as $order): ?>
+                                                <tr>
+                                                    <td class="col-3">
+                                                        <p class="font-bold ms-3 mb-0"><?= $order->table_number ?></p>
+                                                    </td>
+                                                    <td class="col-auto">
+                                                        <p class="mb-0">Rp. <?= number_format($order->total_price, 0, '.', '.') ?></p>
+                                                    </td>
+                                                    <td class="col-auto">
+                                                        <p class="mb-0"><?= \CodeIgniter\I18n\Time::parse($order->created_at)->humanize() ?></p>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="3" class="text-center"><i>belum ada data pesanan.</i></td>
+                                            <tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>

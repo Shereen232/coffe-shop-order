@@ -32,6 +32,7 @@
                                     <tr>
                                         <th> No </th>
                                         <th> Nama Kategori </th>
+                                        <th> Gambar </th>
                                         <th> Action </th>
                                     </tr>
                                 </thead>
@@ -40,6 +41,13 @@
                                         <tr>
                                             <td> <?= $key + 1 ?> </td>
                                             <td> <?= $value['nama_category'] ?> </td>
+                                             <td>
+                                                <?php if (!empty($value['image'])) : ?>
+                                                    <img src="<?= base_url('uploads/category/' . $value['image']) ?>" alt="Kategori" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                                <?php else : ?>
+                                                    <span class="text-muted">Tidak ada gambar</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td> 
                                                 <a href="<?= base_url() ?>admin/category-product/edit/<?= $value['id'] ?>" type="button" class="btn btn-primary btn-sm">
                                                     <i class="bi bi-pencil-square"></i>

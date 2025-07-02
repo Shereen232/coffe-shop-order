@@ -15,91 +15,119 @@ class CategoryController extends BaseController
 
     public function create()
     {
-        // Jika ada request method POST, maka proses tambah kategori
-        if ($this->request->getMethod() == 'post') {
-            // Validasi input
-            $validation =  \Config\Services::validation();
-            if (!$this->validate([
-                'nama_category' => 'required|min_length[3]|max_length[255]',
-            ])) {
-                // Menampilkan pesan error jika validasi gagal
-                return redirect()->to('admin/category-product/create')->withInput()->with('validation', $validation->getErrors());
-            }
-
-            // Menyimpan data kategori ke database
-            $categoryModel = new CategoryModel();
-            $categoryModel->save([
-                'nama_category' => $this->request->getPost('nama_category'),
-            ]);
-
-            session()->setFlashdata('success_message', 'Kategori berhasil ditambahkan.');
-            return redirect()->to('admin/category-product');
-        }
-
         return view('admin/category/create');
     }
 
     public function store()
     {
-        // Validasi input
-        if (!$this->validate([
+        $validation = \Config\Services::validation();
+
+        $rules = [
             'nama_category' => 'required|min_length[3]|max_length[255]',
-        ])) {
-            // Jika validasi gagal, kirimkan kembali ke form dengan pesan error
-            return redirect()->to('admin/category-product/create')->withInput()->with('validation', \Config\Services::validation()->getErrors());
+            'image' => 'permit_empty|is_image[image]|max_size[image,2048]|mime_in[image,image/jpg,image/jpeg,image/png]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->to('admin/category-product/create')
+                            ->withInput()
+                            ->with('validation', $validation->getErrors());
         }
 
-        // Menyimpan data kategori ke database
+        $imageFile = $this->request->getFile('image');
+        $imageName = null;
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            // Pastikan folder ada
+            if (!is_dir('uploads/category')) {
+                mkdir('uploads/category', 0755, true);
+            }
+            
+            $imageName = $imageFile->getRandomName();
+            $imageFile->move('uploads/category', $imageName);
+        }
+
         $categoryModel = new CategoryModel();
         $categoryModel->save([
             'nama_category' => $this->request->getPost('nama_category'),
+            'image' => $imageName,
         ]);
 
-        // Menampilkan pesan sukses setelah berhasil menyimpan
         session()->setFlashdata('success_message', 'Kategori berhasil ditambahkan.');
         return redirect()->to('admin/category-product');
     }
 
     public function edit($id)
     {
-        // Mengambil data kategori berdasarkan ID
         $categoryModel = new CategoryModel();
         $category = $categoryModel->find($id);
 
-        // Jika kategori tidak ditemukan, redirect ke halaman kategori
         if (!$category) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Kategori tidak ditemukan');
         }
 
-        // Jika ada request method POST, maka proses update kategori
-        if ($this->request->getMethod() == 'POST') {
-            // Validasi input
-            $validation =  \Config\Services::validation();
-            if (!$this->validate([
-                'nama_category' => 'required|min_length[3]|max_length[255]',
-            ])) {
-                // Menampilkan pesan error jika validasi gagal
-                session()->setFlashdata('success_message', 'Kategori berhasil diubah.');
-                return redirect()->to('admin/category-product/edit/' . $id)->withInput()->with('validation', $validation->getErrors());
-            }
+        // ✅ Tampilkan form edit
+        return view('admin/category/edit', ['category' => $category]);
+    }
 
-            // Mengupdate data kategori
-            $categoryModel->update($id, [
-                'nama_category' => $this->request->getPost('nama_category'),
-            ]);
+    public function update($id)
+    {
+        $validation = \Config\Services::validation();
 
-            session()->setFlashdata('success_message', 'Kategori berhasil diperbarui.');
-            return redirect()->to('admin/category-product');
+        $rules = [
+            'nama_category' => 'required|min_length[3]|max_length[255]',
+            'image' => 'permit_empty|is_image[image]|max_size[image,2048]|mime_in[image,image/jpg,image/jpeg,image/png]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->to('admin/category-product/edit/' . $id)
+                            ->withInput()
+                            ->with('validation', $validation->getErrors());
         }
 
-        return view('admin/category/edit', ['category' => $category]);
+        $categoryModel = new CategoryModel();
+        $category = $categoryModel->find($id);
+
+        if (!$category) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Kategori tidak ditemukan');
+        }
+
+        $imageFile = $this->request->getFile('image');
+        $imageName = $category['image'];
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            // Hapus gambar lama jika ada
+            if (!empty($imageName) && file_exists('uploads/category/' . $imageName)) {
+                unlink('uploads/category/' . $imageName);
+            }
+
+            // Pastikan folder ada
+            if (!is_dir('uploads/category')) {
+                mkdir('uploads/category', 0755, true);
+            }
+
+            $imageName = $imageFile->getRandomName();
+            $imageFile->move('uploads/category', $imageName);
+        }
+
+        $categoryModel->update($id, [
+            'nama_category' => $this->request->getPost('nama_category'),
+            'image' => $imageName,
+        ]);
+
+        session()->setFlashdata('success_message', 'Kategori berhasil diperbarui.');
+        return redirect()->to('admin/category-product');
     }
 
     public function delete($id)
     {
         $categoryModel = new CategoryModel();
+        $category = $categoryModel->find($id);
 
-        // Menghapus kategori berdasarkan ID
+        if ($category && !empty($category['image']) && file_exists('uploads/category/' . $category['image'])) {
+            // ✅ Hapus file gambar jika ada
+            unlink('uploads/category/' . $category['image']);
+        }
+
         if ($categoryModel->delete($id)) {
             session()->setFlashdata('success_message', 'Kategori berhasil dihapus.');
         } else {
@@ -108,5 +136,4 @@ class CategoryController extends BaseController
 
         return redirect()->to('admin/category-product');
     }
-
 }

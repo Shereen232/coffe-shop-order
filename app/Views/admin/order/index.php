@@ -9,7 +9,8 @@
                 <div class="col-12 col-md-12">
                     <div class="card">
                         <div class="card-body px-4 py-4-5">
-                            <h3><?= $title ?></h3> <p class="text-subtitle text-muted">Halaman untuk manajemen pesanan produk.</p>
+                            <h3><?= $title ?? 'Manajemen Pesanan' ?></h3> 
+                            <p class="text-subtitle text-muted">Halaman untuk manajemen pesanan produk.</p>
                         </div>
                     </div>
                 </div>
@@ -18,6 +19,24 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
+                        <h4 class="card-title">Filter Pesanan Berdasarkan Tanggal</h4>
+                        <form action="<?= base_url('admin/orders') ?>" method="GET" class="mb-4">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4 col-lg-3">
+                                    <label for="start_date" class="form-label">Dari Tanggal:</label>
+                                    <input type="text" class="form-control flatpickr" id="start_date" name="start_date" placeholder="Pilih Tanggal Mulai" value="<?= esc($start_date ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 col-lg-3">
+                                    <label for="end_date" class="form-label">Sampai Tanggal:</label>
+                                    <input type="text" class="form-control flatpickr" id="end_date" name="end_date" placeholder="Pilih Tanggal Akhir" value="<?= esc($end_date ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 col-lg-3">
+                                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                                    <a href="<?= base_url('admin/orders') ?>" class="btn btn-secondary">Reset Filter</a>
+                                </div>
+                            </div>
+                        </form>
+
                         <div class="table-responsive">
                             <table id="dataTable" class="table">
                                 <thead>
@@ -32,13 +51,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($orders as $key => $order) : ?>
+
+                                    <?php $i=1; foreach ($orders as $order) : ?>
                                         <?php if ($order->payment) :?>
                                         <tr>
-                                            <td> <?= $order->id ?> </td>
+                                            <td> <?= $i++ ?> </td>
                                             <td> <?= $order->table_number ?? 'N/A' ?> </td>
-                                            <td> <?= $order->payment->transaction_id ?? 'Belum Dibayar' ?> </td> 
-                                            <td> <?= $order->payment->payment_method ?? '-' ?> </td> 
+                                            <td> <?= $order->payment->transaction_id ?? 'Belum Dibayar' ?> </td>
+                                            <td> 
+                                                <?php if ($order->payment->payment_method === 'cash_on_delivery') {
+                                                    echo "Cash";
+                                                } else if ($order->payment->payment_method === 'online_payment') {
+                                                    echo "Online Payment";
+                                                } else {
+                                                    echo "Unknown";
+                                                } ?> 
+                                            </td> 
                                             <td>
                                                 <?php
                                                     $status = $order->payment->payment_status ?? 'Pending';
@@ -67,6 +95,11 @@
                                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailModal" data-order-id="<?= $order->id ?>" style="color: white;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </button>
+                                                <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
+                                                    <button type="button" class="btn btn-success btn-sm" id="btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                    <i class="bi bi-cash"></i>
+                                                </button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                         <?php endif;?>
@@ -97,6 +130,11 @@
         </div>
     </div>
 </div>
+
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
@@ -142,6 +180,13 @@
 
     // JavaScript untuk memuat detail pesanan ke modal menggunakan AJAX
     $(document).ready(function() {
+        // Inisialisasi Flatpickr
+        flatpickr(".flatpickr", {
+            dateFormat: "Y-m-d", // Format tanggal yang diinginkan (sesuai dengan format database jika perlu)
+            allowInput: true, // Memungkinkan input manual
+            // Anda bisa menambahkan opsi lain seperti minDate, maxDate, dll.
+        });
+
         $('#orderDetailModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Tombol yang memicu modal
             var orderId = button.data('order-id'); // Ekstrak info dari atribut data-order-id
@@ -172,7 +217,7 @@
                                     <li>
                                         ${item.product_name} (${item.quantity}x) - Rp ${new Intl.NumberFormat('id-ID').format(item.price)}
                                         <br>
-                                        <img src="<?= base_url('uploads/products/') ?>${item.image}" alt="${item.product_name}" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="<?= base_url('uploads/products/') ?>${item.image}" alt="${item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-top: 5px;">
                                     </li>
                                 `;
                             });
@@ -208,7 +253,8 @@
         // Fungsi helper untuk mendapatkan kelas badge (sesuai dengan yang ada di tabel)
         function getBadgeClass(status) {
             switch (status ? status.toLowerCase() : '') {
-                case 'completed':
+                case 'settlement':
+                case 'completed': // Tambahkan 'completed' jika ada status ini
                 case 'success':
                 case 'paid':
                     return 'bg-success';
@@ -223,6 +269,57 @@
             }
         }
     });
+
+    $('#btn-bayar-cash').on('click', function(){
+        const id = $(this).data('order-id');
+        Swal.fire({
+            title: "Selesaikan Pembayaran?",
+            text: "Apakah anda yakin untuk selesaikan pesanan ini!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Selesaikan!"
+        }).then((result) => {
+        if (result.isConfirmed) {
+            console.log("Button clicked, proceeding with payment...");
+            
+            
+            $.ajax({
+                url: `<?= base_url() ?>admin/orders/${id}/paycash`,
+                method: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Pembayaran Berhasil!",
+                            text: "Pesanan berhasil diselesaikan.",
+                            icon: "success"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Reload halaman untuk memperbarui daftar pesanan
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: response.message || "Terjadi kesalahan saat menyelesaikan pesanan.",
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Terjadi kesalahan saat menghubungi server.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        });
+        
+    })
 </script>
 
 <?= $this->endSection() ?>

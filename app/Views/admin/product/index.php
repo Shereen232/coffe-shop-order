@@ -44,7 +44,7 @@
                                         <tr>
                                             <td> <?= $key + 1 ?> </td>
                                             <td> <?= $value['name'] ?> </td>
-                                            <td> <?= $value['category_id'] ?> </td>
+                                            <td> <?= $value['category_nama_category'] ?> </td>
                                             <td> <?= $value['stock'] ?> </td>
                                             <td> <?= number_format($value['price'], 0, ',', '.') ?> </td>
                                             <td> <img src="<?= base_url('uploads/products/'.$value['image']) ?>" alt="<?= $value['name'] ?>" width="50" height="50"> </td>
