@@ -78,6 +78,11 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
                 $routes->post('delete/(:num)', 'Admin\PaymentController::delete/$1');
             });
 
+            $routes->group('keuangan', function($routes){
+                $routes->get('', 'Admin\KeuanganController::index');
+                $routes->post('expense/store', 'Admin\KeuanganController::storeExpense');
+            });
+
             $routes->group('reviews', function($routes){
                 $routes->get('', 'Admin\ReviewController::index');
                 $routes->post('delete/(:num)', 'Admin\ReviewController::delete/$1');

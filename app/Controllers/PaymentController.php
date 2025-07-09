@@ -12,7 +12,7 @@ use App\Models\TableModel;
 
 class PaymentController extends BaseController
 {
-    protected $productModel, $cartModel, $cartItemModel, $orderModel, $orderItemModel, $tableModel, $paymentModel;
+    protected $productModel, $cartModel, $cartItemModel, $orderModel, $orderItemModel, $tableModel, $paymentModel, $financeModel;
     public function __construct()
     {
         $this->productModel = new ProductModel();
@@ -22,6 +22,7 @@ class PaymentController extends BaseController
         $this->orderItemModel = new OrderItemModel();
         $this->tableModel = new TableModel();
         $this->paymentModel = new PaymentModel();
+        $this->financeModel = new \App\Models\FinanceModel();
     }
 
     public function updateStatus()
@@ -47,6 +48,12 @@ class PaymentController extends BaseController
         $paymentModel->where('order_id', $data->order_id)
             ->set(['payment_status' => $data->transaction_status])
             ->update();
+
+        $this->financeModel->save([
+            'type' => 'income',
+            'amount' => $data->gross_amount, // Ambil total harga dari order
+            'notes' => 'Pembayaran online untuk order ID ' . $data->order_id,
+        ]);
 
         return $this->response->setJSON(['status' => 'success']);
 

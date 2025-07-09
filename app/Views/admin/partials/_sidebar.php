@@ -57,13 +57,16 @@
                     </a>
                 </li>
 
-                <!-- Payment Management Menu -->
-                <!-- <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url('admin/payments') ?>">
-                        <i class="bi bi-credit-card"></i>
-                        <span class="menu-title">Payment Management</span>
+                <!-- Manajemen Keuangan Menu -->
+                <!-- Manajemen Keuangan – dengan submenu -->
+                <li class="sidebar-item">
+                    <a href="<?= base_url() ?>admin/keuangan" class="sidebar-link">
+                        <i class="bi bi-cash-stack"></i>
+                        <span class="menu-title">Manajemen Keuangan</span>
                     </a>
-                </li> -->
+                </li>
+
+
 
                 <!-- Review Management Menu -->
                 <!-- <li class="sidebar-item">

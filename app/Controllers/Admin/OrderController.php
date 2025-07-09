@@ -14,6 +14,7 @@ class OrderController extends BaseController
     protected $orderItemModel;
     protected $paymentModel;
     protected $tableModel; // Jika digunakan secara langsung di controller
+    protected $financeModel;
 
     public function __construct()
     {
@@ -21,6 +22,7 @@ class OrderController extends BaseController
         $this->orderItemModel = new OrderItemModel();
         $this->paymentModel = new PaymentModel();
         $this->tableModel = new TableModel(); // Inisialisasi TableModel jika diperlukan
+        $this->financeModel = new \App\Models\FinanceModel();
     }
 
     public function index()
@@ -143,6 +145,12 @@ class OrderController extends BaseController
             $this->paymentModel->where('order_id', $id)->set([
                 'payment_status' => 'settlement'
             ])->update();
+
+            $this->financeModel->save([
+                'type' => 'income',
+                'amount' => $this->orderModel->find($id)->total_price, // Ambil total harga dari order
+                'notes' => 'Pembayaran cash untuk order ID ' . $id,
+            ]);
 
             return $this->response->setJSON([
                 'success' => true,

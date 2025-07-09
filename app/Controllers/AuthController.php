@@ -54,7 +54,7 @@ class AuthController extends BaseController
 
         $builder->insert($data);
 
-        $table['status'] = 'occupied';
+        
         $this->tableModel->update($table['id'], $table);
 
         $sessRedirect = session()->get('redirect_url');

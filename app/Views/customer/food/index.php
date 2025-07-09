@@ -69,7 +69,7 @@
     <!-- <h4 class="mb-4">Ulasan Produk</h4> -->
 
     <!-- Dummy review loop -->
-    <!-- <div class="list-group">
+    <div class="list-group">
       <?php if ($reviews == null) echo '<div>Belum ada ulasan untuk produk ini.</div>'; ?>
       <?php foreach ($reviews as $key => $review) : ?>
       <?php $timestamp = strtotime($review->created_at); ?>
@@ -105,7 +105,7 @@
         </div>
       </div>
       <?php endforeach; ?>
-    </div> -->
+    </div>
 
     <!-- Tombol Tambah Ulasan -->
     <!-- <div class="mt-4">
