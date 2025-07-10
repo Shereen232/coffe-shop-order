@@ -2,6 +2,24 @@
 
 <?= $this->section('app') ?>
 
+<style>
+    table#dataTable th,
+    table#dataTable td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .col-no { width: 40px; }
+    .col-nama-kategori {
+        width: 100px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    .col-gambar { width: 80px; }
+    .col-status { width: 100px; }
+    .col-action { width: 160px; }
+</style>
+
 <div class="content-wrapper">
     <div class="row">
         <div class="col-12 col-lg-12">
@@ -27,39 +45,52 @@
                             </a>
                         </div>
                         <div class="table-responsive">
-                            <table id="dataTable" class="table">
+                            <table id="dataTable" class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th> No </th>
-                                        <th> Nama Kategori </th>
-                                        <th> Gambar </th>
-                                        <th> Action </th>
+                                        <th class="col-no">No</th>
+                                        <th class="col-nama-kategori">Nama Kategori</th>
+                                        <th class="col-gambar">Gambar</th>
+                                        <th class="col-status">Status</th>
+                                        <th class="col-action">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($categories as $key => $value) : ?>
                                         <tr>
-                                            <td> <?= $key + 1 ?> </td>
-                                            <td> <?= $value['nama_category'] ?> </td>
-                                             <td>
+                                            <td><?= $key + 1 ?></td>
+                                            <td class="col-nama-kategori"><?= $value['nama_category'] ?></td>
+                                            <td>
                                                 <?php if (!empty($value['image'])) : ?>
                                                     <img src="<?= base_url('uploads/category/' . $value['image']) ?>" alt="Kategori" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                                                 <?php else : ?>
                                                     <span class="text-muted">Tidak ada gambar</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td> 
-                                                <a href="<?= base_url() ?>admin/category-product/edit/<?= $value['id'] ?>" type="button" class="btn btn-primary btn-sm">
+                                            <td>
+                                                <?= is_null($value['deleted_at']) 
+                                                    ? '<span class="badge bg-success">Aktif</span>' 
+                                                    : '<span class="badge bg-secondary">Nonaktif</span>' ?>
+                                            </td>
+                                            <td>
+                                                <a href="<?= base_url() ?>admin/category-product/edit/<?= $value['id'] ?>" class="btn btn-primary btn-sm">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(<?= $value['id'] ?>)"> 
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </button> 
+                                                <?php if (is_null($value['deleted_at'])): ?>
+                                                    <button type="button" class="btn btn-warning btn-sm" onclick="toggleCategory(<?= $value['id'] ?>, 'nonaktif')">
+                                                        <i class="bi bi-eye-slash"></i> Nonaktifkan
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="toggleCategory(<?= $value['id'] ?>, 'aktif')">
+                                                        <i class="bi bi-eye"></i> Aktifkan
+                                                    </button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
@@ -107,5 +138,38 @@
         });
     }
 </script>
+
+<script>
+    function toggleCategory(id, action)
+    {
+        const confirmText = action === 'nonaktif' ? 'menonaktifkan' : 'mengaktifkan';
+        const successText = action === 'nonaktif' ? 'dinonaktifkan' : 'diaktifkan kembali';
+
+        Swal.fire({
+            title: `Yakin ingin ${confirmText} kategori ini?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, lanjutkan"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= base_url('admin/category-product/toggle/') ?>" + id,
+                    data: { action: action },
+                    success: function(res) {
+                        Swal.fire("Berhasil!", `Kategori berhasil ${successText}.`, "success")
+                            .then(() => location.reload());
+                    },
+                    error: function(err) {
+                        Swal.fire("Error", err.responseJSON.message, "error");
+                    }
+                });
+            }
+        });
+    }
+</script>
+
 
 <?= $this->endSection() ?>

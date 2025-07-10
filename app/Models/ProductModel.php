@@ -10,9 +10,14 @@ class ProductModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['name','description','price','stock','image','category_id'];
+    protected $allowedFields    = ['name','description','price','stock','image','category_id','deleted_at',];
+
+    public function restore($id)
+    {
+        return $this->withDeleted()->update($id, ['deleted_at' => null]);
+    }
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

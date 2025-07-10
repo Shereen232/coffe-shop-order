@@ -2,14 +2,23 @@
 
 namespace App\Controllers\Admin;
 
+use App\Controllers\BaseController;
 use App\Models\CategoryModel;
 
 class CategoryController extends BaseController
 {
+    protected $categoryModel;
+
+    public function __construct()
+    {
+        $this->categoryModel = new CategoryModel();
+    }
+
+
     public function index()
     {
         $categoryModel = new CategoryModel();
-        $data['categories'] = $categoryModel->findAll();  // Mengambil semua data kategori produk
+        $data['categories'] = $categoryModel->withDeleted()->findAll();
         return view('admin/category/index', $data);  // Menampilkan kategori produk di view
     }
 
@@ -23,7 +32,7 @@ class CategoryController extends BaseController
         $validation = \Config\Services::validation();
 
         $rules = [
-            'nama_category' => 'required|min_length[3]|max_length[255]',
+            'nama_category' => 'required|min_length[3]|max_length[255]|is_unique[category_product.nama_category]',
             'image' => 'permit_empty|is_image[image]|max_size[image,2048]|mime_in[image,image/jpg,image/jpeg,image/png]'
         ];
 
@@ -74,7 +83,7 @@ class CategoryController extends BaseController
         $validation = \Config\Services::validation();
 
         $rules = [
-            'nama_category' => 'required|min_length[3]|max_length[255]',
+            'nama_category' => 'required|min_length[3]|max_length[255]|is_unique[category_product.nama_category,id,' . $id . ']',
             'image' => 'permit_empty|is_image[image]|max_size[image,2048]|mime_in[image,image/jpg,image/jpeg,image/png]'
         ];
 
@@ -136,4 +145,39 @@ class CategoryController extends BaseController
 
         return redirect()->to('admin/category-product');
     }
+
+    public function toggle($id)
+    {
+        $action = $this->request->getPost('action');
+
+        // Ambil kategori termasuk yang sudah dihapus (soft delete)
+        $category = $this->categoryModel->withDeleted()->find($id);
+
+        if (!$category) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Kategori tidak ditemukan.'
+            ])->setStatusCode(404);
+        }
+
+        if ($action === 'nonaktif') {
+            $this->categoryModel->delete($id); // Soft delete
+            $message = 'Kategori berhasil dinonaktifkan.';
+        } elseif ($action === 'aktif') {
+            $this->categoryModel->restore($id); // Gunakan restore method
+            $message = 'Kategori berhasil diaktifkan kembali.';
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aksi tidak valid.'
+            ])->setStatusCode(400);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => $message
+        ]);
+    }
+
+
 }

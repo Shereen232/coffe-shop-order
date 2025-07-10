@@ -99,7 +99,9 @@
                                 <table class="table table-hover table-lg">
                                     <thead>
                                         <tr>
+                                            <th>ID transaksi</th>
                                             <th>ID Meja</th>
+                                            <th>Nama Pemesan</th>
                                             <th>Jumlah</th>
                                             <th>Waktu Pemesanan</th>
                                         </tr>
@@ -108,6 +110,9 @@
                                         <?php if (count($latest_orders) > 0): ?>
                                             <?php foreach ($latest_orders as $order): ?>
                                                 <tr>
+                                                    <td class="col-3">
+                                                        <p class="font-bold ms-3 mb-0"><?= $order->transaction_id ?></p>
+                                                    </td>
                                                     <td class="col-3">
                                                         <p class="font-bold ms-3 mb-0"><?= $order->table_number ?></p>
                                                     </td>

@@ -2,6 +2,23 @@
 
 <?= $this->section('app') ?>
 
+<style>
+    table#dataTable th,
+    table#dataTable td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .col-no { width: 40px; }
+    .col-nama { width: 10px; white-space: normal; word-wrap: break-word; }
+    .col-kategori { width: 130px; }
+    .col-stok { width: 60px; }
+    .col-harga { width: 100px; }
+    .col-gambar { width: 70px; }
+    .col-status { width: 90px; }
+    .col-action { width: 160px; }
+</style>
+
 <div class="content-wrapper">
     <div class="row">
         <div class="col-12 col-lg-12">
@@ -27,18 +44,19 @@
                             </a>
                         </div>
                         <div class="table-responsive">
-                            <table id="dataTable" class="table">
-                                <thead>
-                                    <tr>
-                                        <th> No </th>
-                                        <th> Nama Produk </th>
-                                        <th> Kategori </th>
-                                        <th> Stok </th>
-                                        <th> Harga </th>
-                                        <th> Gambar </th>
-                                        <th> Action </th>
-                                    </tr>
-                                </thead>
+                                <table id="dataTable" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-no">No</th>
+                                            <th class="col-nama">Nama Produk</th>
+                                            <th class="col-kategori">Kategori</th>
+                                            <th class="col-stok">Stok</th>
+                                            <th class="col-harga">Harga</th>
+                                            <th class="col-gambar">Gambar</th>
+                                            <th class="col-status">Status</th>
+                                            <th class="col-action">Action</th>
+                                        </tr>
+                                    </thead>
                                 <tbody>
                                     <?php foreach ($products as $key => $value) : ?>
                                         <tr>
@@ -48,13 +66,25 @@
                                             <td> <?= $value['stock'] ?> </td>
                                             <td> <?= number_format($value['price'], 0, ',', '.') ?> </td>
                                             <td> <img src="<?= base_url('uploads/products/'.$value['image']) ?>" alt="<?= $value['name'] ?>" width="50" height="50"> </td>
-                                            <td> 
-                                                <a href="<?= base_url() ?>admin/product/edit/<?= $value['id'] ?>" type="button" class="btn btn-primary btn-sm">
+                                            <td>
+                                                <?= is_null($value['deleted_at']) ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>' ?>
+                                            </td>
+                                            <td>
+                                                <a href="<?= base_url() ?>admin/product/edit/<?= $value['id'] ?>" class="btn btn-primary btn-sm">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(<?= $value['id'] ?>)"> 
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </button> 
+
+                                                <?php if (is_null($value['deleted_at'])): ?>
+                                                <!-- Produk aktif -->
+                                                <button type="button" class="btn btn-warning btn-sm" onclick="toggleProduct(<?= $value['id'] ?>, 'nonaktif')">
+                                                    <i class="bi bi-eye-slash"></i> Nonaktifkan
+                                                </button>
+                                                <?php else: ?>
+                                                    <!-- Produk nonaktif -->
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="toggleProduct(<?= $value['id'] ?>, 'aktif')">
+                                                        <i class="bi bi-eye"></i> Aktifkan
+                                                    </button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -106,6 +136,35 @@
             }
         });
     }
+
+    function toggleProduct(id, action) {
+        const confirmText = action === 'nonaktif' ? 'menonaktifkan' : 'mengaktifkan';
+        const successText = action === 'nonaktif' ? 'dinonaktifkan' : 'diaktifkan';
+
+        Swal.fire({
+            title: `Yakin ingin ${confirmText} produk ini?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, lanjutkan",
+            cancelButtonText: "Batal"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `<?= base_url('admin/product/toggle') ?>/${id}`,
+                    method: "POST",
+                    data: { action: action },
+                    success: function (res) {
+                        Swal.fire("Berhasil!", `Produk berhasil ${successText}.`, "success")
+                            .then(() => location.reload());
+                    },
+                    error: function (err) {
+                        Swal.fire("Error", err.responseJSON.message, "error");
+                    }
+                });
+            }
+        });
+    }
+
 </script>
 
 <?= $this->endSection() ?>

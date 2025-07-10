@@ -50,6 +50,7 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
             $routes->post('product/store', 'Admin\ProductController::store');
             $routes->get('product/edit/(:num)', 'Admin\ProductController::edit/$1');
             $routes->post('product/update/(:num)', 'Admin\ProductController::update/$1');
+            $routes->post('product/toggle/(:num)', 'Admin\ProductController::toggle/$1');
             $routes->post('product/delete/(:num)', 'Admin\ProductController::delete/$1');
         
             $routes->get('category-product', 'Admin\CategoryController::index');
@@ -58,6 +59,8 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
             $routes->get('category-product/edit/(:num)', 'Admin\CategoryController::edit/$1');
             $routes->post('category-product/update/(:num)', 'Admin\CategoryController::update/$1');
             $routes->post('category-product/delete/(:num)', 'Admin\CategoryController::delete/$1');
+            $routes->post('category-product/toggle/(:num)', 'Admin\CategoryController::toggle/$1');
+
             
             $routes->get('tables', 'Admin\TableController::index');
             $routes->get('tables/create', 'Admin\TableController::create');

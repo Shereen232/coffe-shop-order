@@ -21,6 +21,7 @@ class ProductController extends BaseController
         $data['categories'] = $this->categoryModel->findAll();
 
         $data['products'] = $this->productModel
+            ->withDeleted() 
             ->select('products.*, category_product.nama_category as category_nama_category')
             ->join('category_product', 'category_product.id = products.category_id', 'left')
             ->findAll();
@@ -39,16 +40,17 @@ class ProductController extends BaseController
     // Menyimpan produk baru
     public function store()
     {
+        $validation = \Config\Services::validation();
         $data = $this->request->getPost();
         $validate = $this->validate([
-            'name'        => 'required|min_length[3]|max_length[255]',
+            'name'        => 'required|min_length[3]|max_length[255]|is_unique[products.name]',
             'price'       => 'required|decimal',
             'stock'       => 'required|integer',
             'category_id' => 'required|integer',
         ]);
 
         // Validasi data produk
-        if (!$validate)  return redirect()->back()->withInput();
+        if (!$validate)  return redirect()->back()->withInput()->with('validation', $validation->getErrors());
 
         // Menangani upload gambar
         $image = $this->request->getFile('image');
@@ -94,7 +96,7 @@ class ProductController extends BaseController
     {
         // Validasi input
         if (!$this->validate([
-            'name' => 'required|min_length[3]|max_length[255]',
+            'name' => 'required|min_length[3]|max_length[255]|is_unique[products.name,id,{id}]',
             'category_id' => 'required|integer',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
@@ -137,7 +139,6 @@ class ProductController extends BaseController
         return redirect()->to('admin/products');
     }
 
-
     // Menghapus produk
     public function delete($id)
     {
@@ -150,4 +151,37 @@ class ProductController extends BaseController
 
         return redirect()->to('admin/products');
     }
+
+    public function toggle($id)
+    {
+        $action = $this->request->getPost('action');
+
+        $product = $this->productModel->withDeleted()->find($id);
+
+        if (!$product) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Produk tidak ditemukan.'
+            ])->setStatusCode(404);
+        }
+
+        if ($action === 'nonaktif') {
+            $this->productModel->delete($id); // soft delete
+            $message = 'Produk berhasil dinonaktifkan.';
+        } elseif ($action === 'aktif') {
+            $this->productModel->restore($id); // panggil method restore
+            $message = 'Produk berhasil diaktifkan kembali.';
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aksi tidak valid.'
+            ])->setStatusCode(400);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => $message
+        ]);
+    }
+
 }

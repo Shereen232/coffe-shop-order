@@ -3,10 +3,13 @@
 namespace App\Controllers\Admin;
 
 use App\Models\ReviewModel;
+use App\Controllers\BaseController;
+use App\Models\PaymentModel;
 
 class DashboardController extends BaseController
 {
     protected $reviewModel;
+    protected $paymentModel;
 
     public function __construct()
     {
@@ -28,8 +31,8 @@ class DashboardController extends BaseController
         ->findAll(5);
 
         $latestOrders = $db->table('orders')
-        ->select('orders.*, tables.table_number')
         ->join('tables', 'tables.id = orders.user_id')
+        ->join('payments', 'payments.order_id = orders.id')
         ->orderBy('orders.created_at', 'DESC')
         ->limit(5)
         ->get();
