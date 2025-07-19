@@ -20,7 +20,9 @@
                     <ul class="list-unstyled">
                         <li><strong>Trx ID: </strong><?= $order->payment->transaction_id ?></li>
                         <li><strong>Nomor Meja: </strong><?= $order->table ?></li>
-                        <li><strong>Metode Pembayaran:</strong> <?= $order->payment->payment_method ?></li>
+                        <li><strong>Metode Pembayaran:</strong> 
+                            <?= $order->payment->payment_method === 'cash_on_delivery' ? 'Cash' : $order->payment->payment_method ?>
+                        </li>
                         <li><strong>Status:</strong> <?php if ($order->payment->payment_status == 'pending') {
                             echo '<span class="badge bg-warning text-dark">Menunggu Pembayaran</span>';
                         }else if ($order->payment->payment_status == 'settlement') {

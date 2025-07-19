@@ -1,6 +1,7 @@
 <?= $this->extend('admin/template/index.php') ?>
 
 <?= $this->section('app') ?>
+<?php $role = session()->get('role'); ?>
 
 <div class="content-wrapper">
     <div class="row">
@@ -47,7 +48,9 @@
                                         <th> Payment Method </th>
                                         <th> Payment Status </th>
                                         <th> Total Payment </th>
-                                        <th> Detail </th>
+                                        <?php if ($role === 'admin') : ?>
+                                            <th>Detail</th>
+                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -91,6 +94,7 @@
                                                 <span class="badge <?= $badgeClass ?>"><?= $status ?></span>
                                             </td>
                                             <td> Rp <?= number_format($order->total_price ?? 0, 0, '.', '.') ?> </td>
+                                            <?php if ($role === 'admin') : ?>
                                             <td>
                                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailModal" data-order-id="<?= $order->id ?>" style="color: white;">
                                                     <i class="bi bi-info-circle"></i>
@@ -101,6 +105,8 @@
                                                 </button>
                                                 <?php endif; ?>
                                             </td>
+                                            <?php endif; ?>
+                                            
                                         </tr>
                                         <?php endif;?>
                                     <?php endforeach; ?>

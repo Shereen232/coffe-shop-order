@@ -32,10 +32,10 @@ class UserController extends BaseController
             'email'    => 'required|valid_email|is_unique[users.email]',
             'phone'    => [
                 'label' => 'Nomor HP',
-                'rules' => 'required|numeric|min_length[10]|max_length[13]|regex_match[/^08[0-9]+$/]'
+                'rules' => 'required|numeric|min_length[10]|max_length[13]|regex_match[/^08[0-9]+$/]|is_unique[users.phone]'
             ],
             'address'  => 'permit_empty',
-            'role'     => 'required|in_list[admin,kitchen,owner]',
+            'role'     => 'required|in_list[admin,dapur,pemilik]',
             'password' => 'required|min_length[6]'
         ];
 
@@ -83,7 +83,7 @@ class UserController extends BaseController
             'email'   => "required|valid_email|is_unique[users.email,id,{$id}]",
             'phone'   => [
                 'label' => 'Nomor HP',
-                'rules' => 'required|numeric|min_length[10]|max_length[13]|regex_match[/^08[0-9]+$/]'
+                'rules' => 'required|numeric|min_length[10]|max_length[13]|regex_match[/^08[0-9]+$/]|is_unique[users.phone,id,'.$id.']'
             ],
             'address' => 'permit_empty',
             'role'    => 'required|in_list[admin,kitchen,owner]',

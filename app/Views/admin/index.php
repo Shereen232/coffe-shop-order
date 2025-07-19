@@ -113,13 +113,15 @@
                                                     <td class="col-3">
                                                         <p class="font-bold ms-3 mb-0"><?= $order->transaction_id ?></p>
                                                     </td>
-                                                    <td class="col-3">
+                                                    <td class="col-2">
                                                         <p class="font-bold ms-3 mb-0"><?= $order->table_number ?></p>
                                                     </td>
-                                                    <td class="col-auto">
+                                                    <td class="col-3">
+                                                        <p class="ms-3 mb-0"><?= $order->nama ?></p>
+                                                    <td class="col-3">
                                                         <p class="mb-0">Rp. <?= number_format($order->total_price, 0, '.', '.') ?></p>
                                                     </td>
-                                                    <td class="col-auto">
+                                                    <td class="col-3">
                                                         <p class="mb-0"><?= \CodeIgniter\I18n\Time::parse($order->created_at)->humanize() ?></p>
                                                     </td>
                                                 </tr>

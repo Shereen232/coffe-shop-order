@@ -10,7 +10,7 @@
                     <div class="d-flex justify-content-end">
                         <a href="<?= base_url() ?>admin/users/create">
                             <button type="button" class="btn btn-primary btn-m mb-3">
-                                <i class="bi bi-plus-circle"></i> Tambah Produk 
+                                <i class="bi bi-plus-circle"></i> Tambah Pengguna 
                             </button>
                         </a>
                     </div>

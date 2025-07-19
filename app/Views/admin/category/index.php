@@ -38,11 +38,13 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-end">
-                            <a href="<?= base_url() ?>admin/category-product/create">
-                                <button type="button" class="btn btn-primary btn-m mb-3">
-                                    <i class="bi bi-plus-circle"></i> Tambah Kategori 
-                                </button>
-                            </a>
+                            <?php if (session()->get('role') === 'admin') : ?>
+                                <a href="<?= base_url() ?>admin/category-product/create">
+                                    <button type="button" class="btn btn-primary btn-m mb-3">
+                                        <i class="bi bi-plus-circle"></i> Tambah Kategori 
+                                    </button>
+                                </a>
+                            <?php endif; ?>
                         </div>
                         <div class="table-responsive">
                             <table id="dataTable" class="table table-bordered">
@@ -52,7 +54,9 @@
                                         <th class="col-nama-kategori">Nama Kategori</th>
                                         <th class="col-gambar">Gambar</th>
                                         <th class="col-status">Status</th>
-                                        <th class="col-action">Action</th>
+                                        <?php if (session()->get('role') === 'admin') : ?>
+                                            <th class="col-action">Action</th>
+                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,24 +76,27 @@
                                                     ? '<span class="badge bg-success">Aktif</span>' 
                                                     : '<span class="badge bg-secondary">Nonaktif</span>' ?>
                                             </td>
-                                            <td>
-                                                <a href="<?= base_url() ?>admin/category-product/edit/<?= $value['id'] ?>" class="btn btn-primary btn-sm">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
-                                                <?php if (is_null($value['deleted_at'])): ?>
-                                                    <button type="button" class="btn btn-warning btn-sm" onclick="toggleCategory(<?= $value['id'] ?>, 'nonaktif')">
-                                                        <i class="bi bi-eye-slash"></i> Nonaktifkan
-                                                    </button>
-                                                <?php else: ?>
-                                                    <button type="button" class="btn btn-success btn-sm" onclick="toggleCategory(<?= $value['id'] ?>, 'aktif')">
-                                                        <i class="bi bi-eye"></i> Aktifkan
-                                                    </button>
-                                                <?php endif; ?>
-                                            </td>
+                                            <?php if (session()->get('role') === 'admin') : ?>
+                                                <td>
+                                                    <a href="<?= base_url() ?>admin/category-product/edit/<?= $value['id'] ?>" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <?php if (is_null($value['deleted_at'])): ?>
+                                                        <button type="button" class="btn btn-warning btn-sm" onclick="toggleCategory(<?= $value['id'] ?>, 'nonaktif')">
+                                                            <i class="bi bi-eye-slash"></i> Nonaktifkan
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <button type="button" class="btn btn-success btn-sm" onclick="toggleCategory(<?= $value['id'] ?>, 'aktif')">
+                                                            <i class="bi bi-eye"></i> Aktifkan
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </td>
+                                            <?php endif; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
+
 
                         </div>
                     </div>

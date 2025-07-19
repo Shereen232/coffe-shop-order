@@ -8,11 +8,13 @@
                 <div class="card-body">
                     <h3>Daftar Meja</h3>
                     <div class="d-flex justify-content-end">
-                        <a href="<?= base_url() ?>admin/tables/create">
-                            <button type="button" class="btn btn-primary btn-m mb-3">
-                                <i class="bi bi-plus-circle"></i> Tambah Produk 
-                            </button>
-                        </a>
+                        <?php if (session()->get('role') === 'admin') : ?>
+                            <a href="<?= base_url() ?>admin/tables/create">
+                                <button type="button" class="btn btn-primary btn-m mb-3">
+                                    <i class="bi bi-plus-circle"></i> Tambah Produk 
+                                </button>
+                            </a>
+                        <?php endif; ?>
                     </div>
                     <div class="table-responsive">
                         <table class="table">
@@ -21,7 +23,9 @@
                                     <th>No</th>
                                     <th>Nomor Meja</th>
                                     <!-- <th>Status</th> -->
-                                    <th>Aksi</th>
+                                    <?php if (session()->get('role') === 'admin') : ?>
+                                            <th class="col-action">Action</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -30,17 +34,19 @@
                                         <td><?= $key + 1 ?></td>
                                         <td><?= $table['table_number'] ?></td>
                                         <!-- <td><?= ucfirst($table['status']) ?></td> -->
-                                        <td>
-                                            <a href="<?= base_url('admin/tables/edit/' . $table['id']) ?>" class="btn btn-primary btn-sm">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                            <button onclick="deleteTable(<?= $table['id'] ?>)" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                            <a  onclick="showQr('<?= base_url('api/get/qr/' . $table['table_number']) ?>')" class="btn btn-secondary btn-sm">
-                                                <i class="bi bi-qr-code"></i> QR
-                                            </a>
-                                        </td>
+                                        <?php if (session()->get('role') === 'admin') : ?>
+                                            <td>
+                                                <a href="<?= base_url('admin/tables/edit/' . $table['id']) ?>" class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <button onclick="deleteTable(<?= $table['id'] ?>)" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                                <a  onclick="showQr('<?= base_url('api/get/qr/' . $table['table_number']) ?>')" class="btn btn-secondary btn-sm">
+                                                    <i class="bi bi-qr-code"></i> QR
+                                                </a>
+                                            </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

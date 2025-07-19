@@ -12,7 +12,7 @@ class OrderModel extends Model
     protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['user_id','total_price','status','created_at','updated_at'];
+    protected $allowedFields    = ['user_id','nama' ,'total_price','status','created_at','updated_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

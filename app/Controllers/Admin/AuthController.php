@@ -38,6 +38,7 @@ class AuthController extends BaseController
             $session->set([
                 'user_id'  => $user->id,
                 'email' => $user->email,
+                'role' => $user->role,
                 'logged_in' => true
             ]);
             return redirect()->to('admin')->with('success', 'Selamat datang ' . $user->name);

@@ -75,10 +75,12 @@ class OrderController extends BaseController
             $cartItems = $this->cartItemModel->where('cart_id', $cartModel->id)->findAll();
             // Tambahkan item ke dalam cart
             $this->orderModel->save([
-                'user_id'    => $cartModel->session_id,
+                'user_id'      => $cartModel->session_id,
+                'nama'         => $this->request->getPost('nama'), 
                 'total_price'  => $cartModel->total,
-                'status'    => 'pending',
+                'status'       => 'pending',
             ]);
+
 
             $orderId = $this->orderModel->getInsertID();
 

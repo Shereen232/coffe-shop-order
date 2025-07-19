@@ -98,7 +98,7 @@
                 const plusBtnId = `plus-${product.id}`;
 
                 html += `
-                <div class="col-6 col-md-3 col-lg-2">
+                <div class="col-6 col-md-4 col-lg-3">
                   <div class="product-item">
                     <span class="badge bg-success position-absolute m-3">${product.price_discount <= 0 ? '' : '-' + product.price_discount + '%'}</span>
                     <a href="<?= base_url() ?>product/${product.id}">
@@ -123,7 +123,7 @@
                           </button>
                         </span>
                       </div>
-                      <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></button>
+                      <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link"> Tambahkan Ke Keranjang <iconify-icon icon="uil:shopping-cart"></iconify-icon></button>
                     </div>
                   </div>
                 </div>

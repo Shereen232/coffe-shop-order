@@ -1,3 +1,6 @@
+<?php
+$role = session()->get('role');
+?>
 <div id="sidebar">
     <div class="sidebar-wrapper active">
         <div class="sidebar-header position-relative">
@@ -17,7 +20,7 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <!-- Dashboard Menu -->
+                <!-- Dashboard -->
                 <li class="sidebar-item">
                     <a href="<?= base_url('admin') ?>" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
@@ -25,85 +28,88 @@
                     </a>
                 </li>
 
-                 <!-- >Kategori Produk Menu -->
-                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/category-product">
-                        <i class="bi bi-archive"></i>
-                        <span class="menu-title">Kategori Produk</span>
-                    </a>
-                </li>
+                <!-- Menu untuk pemilik dan Admin -->
+                <?php if ($role === 'pemilik' || $role === 'admin'): ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/category-product') ?>">
+                            <i class="bi bi-archive"></i>
+                            <span>Kategori Produk</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/products') ?>">
+                            <i class="bi bi-box"></i>
+                            <span>Manajemen Produk</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/tables') ?>">
+                            <i class="bi bi-table"></i>
+                            <span>Manajemen Meja</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url() ?>admin/reviews">
+                            <i class="bi bi-star"></i>
+                            <span class="menu-title">Review Management</span>
+                        </a>
+                    </li>
 
-                <!-- Manajemen Produk Menu -->
+                <?php endif; ?>
+
+                <!-- Menu Manajemen Pesanan untuk semua role -->
+                <?php if (in_array($role, ['pemilik', 'admin', 'dapur'])): ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/orders') ?>">
+                            <i class="bi bi-cart"></i>
+                            <span>Manajemen Pesanan</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <!-- Menu Keuangan hanya pemilik  -->
+                <?php if ($role === 'pemilik'): ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/keuangan') ?>">
+                            <i class="bi bi-cash-stack"></i>
+                            <span>Manajemen Keuangan</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <!-- Manajemen Pengguna hanya pemilik -->
+                <?php if ($role === 'pemilik'): ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/users') ?>">
+                            <i class="bi bi-people"></i>
+                            <span>Manajemen Pengguna</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <!-- Pengaturan untuk pemilik dan Admin -->
+                <?php if ($role === 'pemilik' || $role === 'admin'): ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/setting/payment') ?>">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <span>Pengaturan</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <!-- Akun Saya untuk semua role -->
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/products">
-                        <i class="bi bi-box"></i>
-                        <span class="menu-title">Manajemen Produk</span>
-                    </a>
-                </li>
-
-                <!-- Manajemen Meja Menu -->
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/tables">
-                        <i class="bi bi-table"></i>
-                        <span class="menu-title">Manajemen Meja</span>
-                    </a>
-                </li>
-
-                <!-- Manajemen Pesanan Menu -->
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/orders">
-                        <i class="bi bi-cart"></i>
-                        <span class="menu-title">Manajemen Pesanan</span>
-                    </a>
-                </li>
-
-                <!-- Manajemen Keuangan Menu -->
-                <!-- Manajemen Keuangan – dengan submenu -->
-                <li class="sidebar-item">
-                    <a href="<?= base_url() ?>admin/keuangan" class="sidebar-link">
-                        <i class="bi bi-cash-stack"></i>
-                        <span class="menu-title">Manajemen Keuangan</span>
-                    </a>
-                </li>
-
-
-
-                <!-- Review Management Menu -->
-                <!-- <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/reviews">
-                        <i class="bi bi-star"></i>
-                        <span class="menu-title">Review Management</span>
-                    </a>
-                </li> -->
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/users">
-                        <i class="bi bi-people"></i>
-                        <span class="menu-title">Manajemen Pengguna</span>
-                    </a>
-                </li>
-
-                <!-- Reports Menu -->
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/setting/payment">
-                        <i class="bi bi-file-earmark-bar-graph"></i>
-                        <span class="menu-title">Pengaturan</span>
-                    </a>
-                </li>
-
-                <!-- Profile Menu -->
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?= base_url() ?>admin/my-account">
+                    <a class="sidebar-link" href="<?= base_url('admin/my-account') ?>">
                         <i class="bi bi-person-circle"></i>
-                        <span class="menu-title">Akun Saya</span>
+                        <span>Akun Saya</span>
                     </a>
                 </li>
 
-                <!-- Logout Menu -->
+                <!-- Logout -->
                 <li class="sidebar-item">
                     <form action="<?= base_url('admin/auth/logout') ?>" method="POST" id="logout">
                         <?= csrf_field() ?>
-                        <button class="sidebar-link bg-white border-0" type="submit" style="width: 100%; text-align: left;">
+                        <button id="btnLogout" class="sidebar-link bg-white border-0" type="button" style="width: 100%; text-align: left;">
                             <i class="bi bi-box-arrow-left"></i>
                             <span>Logout</span>
                         </button>
@@ -113,6 +119,7 @@
         </div>
     </div>
 </div>
+
 
 <style>
     .sidebar-link {
@@ -171,6 +178,30 @@
                     item.classList.toggle('active');  // Toggle kelas 'active' untuk submenu
                 }
             });
+        });
+    });
+</script>
+
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('btnLogout').addEventListener('click', function (e) {
+        e.preventDefault(); // Mencegah submit langsung
+
+        Swal.fire({
+            title: 'Konfirmasi Logout',
+            text: "Apakah Anda yakin ingin keluar?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Logout',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout').submit(); // Submit form logout
+            }
         });
     });
 </script>

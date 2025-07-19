@@ -12,12 +12,16 @@
             <!-- Filter Tanggal -->
             <form method="get" class="row g-3 align-items-end mb-4">
                 <div class="col-md-3">
-                    <label for="date" class="form-label">Tanggal</label>
-                    <input type="date" class="form-control" name="date" id="date" value="<?= esc($date) ?>">
+                    <label for="from_date" class="form-label">Dari Tanggal</label>
+                    <input type="date" class="form-control" name="from_date" id="from_date" value="<?= esc($from_date ?? '') ?>">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <label for="to_date" class="form-label">Sampai Tanggal</label>
+                    <input type="date" class="form-control" name="to_date" id="to_date" value="<?= esc($to_date ?? '') ?>">
+                </div>
+                <div class="col-md-3">
                     <button type="submit" class="btn btn-primary me-2">Tampilkan</button>
-                    <a href="<?= base_url('admin/finance/rekapan') ?>" class="btn btn-secondary">Reset</a>
+                    <a href="<?= base_url('admin/keuangan/ekspor') ?>" class="btn btn-secondary">Reset</a>
                 </div>
             </form>
 
@@ -71,8 +75,11 @@
 
             <!-- Tabel Transaksi -->
             <div class="card shadow-sm border-0">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Detail Transaksi</h5>
+                    <a href="<?= base_url('admin/keuangan/ekspor') ?>?from_date=<?= esc($from_date ?? '') ?>&to_date=<?= esc($to_date ?? '') ?>" class="btn btn-danger btn-sm" target="_blank">
+                        <i class="bi bi-file-earmark-pdf"></i> Ekspor PDF
+                    </a>
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table table-bordered align-middle">
@@ -96,7 +103,7 @@
                                     <td><?= date('d M Y', strtotime($t->finance_date)) ?></td>
                                     <td>
                                         <span class="badge bg-<?= $t->type === 'income' ? 'success' : 'danger' ?>">
-                                            <?= ucfirst($t->type) ?>
+                                            <?= $t->type === 'income' ? 'Uang Masuk' : 'Uang Keluar' ?>
                                         </span>
                                     </td>
                                     <td><?= esc($t->notes) ?></td>

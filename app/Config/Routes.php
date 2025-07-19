@@ -84,6 +84,7 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
             $routes->group('keuangan', function($routes){
                 $routes->get('', 'Admin\KeuanganController::index');
                 $routes->post('expense/store', 'Admin\KeuanganController::storeExpense');
+                $routes->get('ekspor', 'Admin\KeuanganController::exportPdf');
             });
 
             $routes->group('reviews', function($routes){

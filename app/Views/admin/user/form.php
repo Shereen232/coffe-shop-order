@@ -39,14 +39,20 @@
                         <label>Role</label>
                         <select name="role" class="form-control" required>
                             <option value="admin" <?= isset($user) && $user->role == 'admin' ? 'selected' : '' ?>>Admin</option>
-                            <option value="kitchen" <?= isset($user) && $user->role == 'kitchen' ? 'selected' : '' ?>>Kitchen</option>
-                            <option value="owner" <?= isset($user) && $user->role == 'owner' ? 'selected' : '' ?>>Owner</option>
+                            <option value="dapur" <?= isset($user) && $user->role == 'dapur' ? 'selected' : '' ?>>Dapur</option>
+                            <option value="pemilik" <?= isset($user) && $user->role == 'pemilik' ? 'selected' : '' ?>>Pemilik</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                   <div class="mb-3 position-relative">
                         <label>Password <?= isset($user) ? '(Biarkan kosong jika tidak ingin mengubah)' : '' ?></label>
-                        <input type="password" name="password" class="form-control" <?= isset($user) ? '' : 'required' ?>>
+                        <div class="input-group">
+                            <input type="password" name="password" class="form-control" id="passwordInput" <?= isset($user) ? '' : 'required' ?>>
+                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                <i class="bi bi-eye-slash" id="iconToggle"></i>
+                            </button>
+                        </div>
                     </div>
+
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-save"></i> Simpan
                     </button>
@@ -57,4 +63,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('passwordInput');
+        const icon = document.getElementById('iconToggle');
+        const isHidden = passwordInput.type === 'password';
+
+        passwordInput.type = isHidden ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', isHidden);
+        icon.classList.toggle('bi-eye-slash', !isHidden);
+    });
+</script>
+
 <?= $this->endSection() ?>

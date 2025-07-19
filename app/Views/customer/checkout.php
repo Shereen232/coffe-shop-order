@@ -18,18 +18,11 @@
             <div class="card-body">
             <h5 class="fw-semibold mb-3">Metode Pembayaran</h5>
             <form action="<?= base_url('checkout') ?>" method="post">
-                <!-- <div class="mb-3">
-                <label class="form-label">Nama Lengkap</label>
+                <div class="mb-3">
+                <label class="form-label">Nama</label>
                 <input type="text" name="nama" class="form-control rounded-pill" required>
                 </div>
-                <div class="mb-3">
-                <label class="form-label">Nomor HP</label>
-                <input type="text" name="telepon" class="form-control rounded-pill" required>
-                </div>
-                <div class="mb-3">
-                <label class="form-label">Alamat Lengkap</label>
-                <textarea name="alamat" class="form-control rounded-4" rows="3" required></textarea>
-                </div> -->
+                
                 <?php foreach ($paymentSetting as $key => $setting) : ?>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="metode_pembayaran" id="<?= $setting ?>" value="<?= $setting ?>">
