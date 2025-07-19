@@ -2,18 +2,19 @@
 
 namespace App\Controllers\Admin;
 
-use App\Models\ReviewModel;
+use App\Models\ProductModel;
 use App\Controllers\BaseController;
 use App\Models\PaymentModel;
+use App\Models\ProductReviewModel;
 
 class DashboardController extends BaseController
 {
-    protected $reviewModel;
+    protected $productreviewModel;
     protected $paymentModel;
 
     public function __construct()
     {
-        $this->reviewModel = new ReviewModel();
+        $this->productreviewModel = new ProductReviewModel();
     }
     
     public function index(): string
@@ -26,8 +27,9 @@ class DashboardController extends BaseController
         ->total_views;
         $products = $db->table('products')
         ->select('COUNT(*) as total_products');
-        $reviews = $this->reviewModel
-        ->orderBy('created_at', 'DESC')
+        $reviews = $this->productreviewModel
+        ->join('orders', 'orders.id = product_reviews.order_id')->asObject()
+        ->orderBy('orders.created_at', 'DESC')
         ->findAll(5);
 
         $latestOrders = $db->table('orders')

@@ -25,7 +25,6 @@
                                     <tr>
                                         <th> No </th>
                                         <th> Nama </th>
-                                        <th> Rating </th>
                                         <th> Review </th>
                                         <th> Action </th>
                                     </tr>
@@ -34,8 +33,7 @@
                                     <?php foreach ($reviews as $key => $review) : ?>
                                         <tr>
                                             <td> <?= $key + 1 ?> </td>
-                                            <td> <?= $review->name ?> </td>
-                                            <td> <?= $review->rating ?> </td>
+                                            <td> <?= $review->nama ?> </td>
                                             <td> <?= $review->comment ?> </td>
                                             <td> 
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(<?= $review->id ?>)"> 

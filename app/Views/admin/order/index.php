@@ -45,12 +45,19 @@
                                         <th> ID Pesanan </th>
                                         <th> No Meja </th>
                                         <th> Trx ID </th>
-                                        <th> Payment Method </th>
-                                        <th> Payment Status </th>
-                                        <th> Total Payment </th>
+                                        <?php if ($role === 'admin') : ?>
+                                        <th> Methode Pembayaran </th>
+                                        <?php endif; ?>
+                                        <th> Status Pembayaran</th>
+                                        <?php if ($role === 'dapur') : ?>
+                                        <th> Status Pesanan</th>
+                                        <th> Aksi</th>
+                                        <?php endif; ?>
+                                        <th> Total Pembayaran </th>
                                         <?php if ($role === 'admin') : ?>
                                             <th>Detail</th>
                                         <?php endif; ?>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -60,7 +67,9 @@
                                         <tr>
                                             <td> <?= $i++ ?> </td>
                                             <td> <?= $order->table_number ?? 'N/A' ?> </td>
+                                            <?php if ($role === 'admin') : ?>
                                             <td> <?= $order->payment->transaction_id ?? 'Belum Dibayar' ?> </td>
+                                            <?php endif; ?>
                                             <td> 
                                                 <?php if ($order->payment->payment_method === 'cash_on_delivery') {
                                                     echo "Cash";

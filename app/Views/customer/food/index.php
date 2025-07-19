@@ -23,12 +23,11 @@
     </div>
 
     <!-- Info Produk -->
-    <div class="col-lg-7">
+    <div class="col-lg-3">
       <h3 class="fw-bold"><?= $product->name ?></h3>
       <div class="d-flex align-items-center mb-2">
         <span class="me-2 text-muted">1 UNIT</span>
         <i class="bi bi-star-fill text-warning"></i>
-        <strong class="ms-1">4.5</strong>
       </div>
 
       <h4 class="text-success fw-bold mb-3">Rp <?= number_format($product->price, 0, ',', '.') ?></h4>
@@ -64,54 +63,35 @@
     </div>
   </div>
 
-  <!-- Ulasan Produk -->
-  <div class="mt-5">
-    <!-- <h4 class="mb-4">Ulasan Produk</h4> -->
+ <!-- Ulasan Produk -->
+<div class="mt-5">
+  <h4 class="mb-4">Ulasan Produk</h4>
 
-    <!-- Dummy review loop -->
+  <?php if (!$reviews): ?>
+    <div class="alert alert-secondary">Belum ada ulasan untuk produk ini.</div>
+  <?php else: ?>
     <div class="list-group">
-      <?php if ($reviews == null) echo '<div>Belum ada ulasan untuk produk ini.</div>'; ?>
-      <?php foreach ($reviews as $key => $review) : ?>
-      <?php $timestamp = strtotime($review->created_at); ?>
-      <div class="list-group-item">
-        <div class="d-flex justify-content-between">
-          <h6 class="mb-1"><?= $review->name ?></h6>
-          <?php
-          $now = new DateTime();
+      <?php foreach ($reviews as $review): ?>
+        <?php
+          $timestamp = strtotime($review->created_at);
           $created_at = (new DateTime())->setTimestamp($timestamp);
-          $interval = $now->diff($created_at);
-          $parts = [];
-          if ($interval->y > 0) {
-              $parts[] = $interval->y . ' tahun';
-          }
-          if ($interval->m > 0) {
-              $parts[] = $interval->m . ' bulan';
-          }
-          if ($interval->d > 0) {
-              $parts[] = $interval->d . ' hari';
-          }
-          if ($interval->h > 0) {
-              $parts[] = $interval->h . ' jam';
-          }
-          if ($interval->i > 0) {
-              $parts[] = $interval->i . ' menit';
-          }
-          ?>
-          <small class="text-muted"><?= !empty($parts) ? $parts[0] . ' yang lalu' : 'baru saja'; ?></small>
+          $now = new DateTime();
+          $diff = $now->diff($created_at);
+          $waktuLalu = $diff->d > 0 ? $diff->d . ' hari' : ($diff->h > 0 ? $diff->h . ' jam' : 'baru saja');
+        ?>
+        <div class="list-group-item col-6cccdfgf">
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-1"><?= esc($review->nama) ?></h6>
+            <small class="text-muted"><?= $waktuLalu ?> yang lalu</small>
+          </div>
+          <p class="mb-1"><?= esc($review->comment) ?></p>
+          
         </div>
-        <p class="mb-1"><?= $review->comment ?></p>
-        <div style="color: orange;">
-        <?= str_repeat('★', $review->rating)?><?=str_repeat('☆', 5 - $review->rating) ?>
-        </div>
-      </div>
       <?php endforeach; ?>
     </div>
+  <?php endif; ?>
+</div>
 
-    <!-- Tombol Tambah Ulasan -->
-    <!-- <div class="mt-4">
-      <a href="#form-review" class="btn btn-outline-primary rounded-pill">Tulis Ulasan</a>
-    </div> -->
-  </div>
 </div>
 
 <script>

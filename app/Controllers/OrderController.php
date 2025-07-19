@@ -208,4 +208,35 @@ class OrderController extends BaseController
         return $snapToken;
     }
     
+    public function submitProductReview($orderId, $productId)
+    {
+        $comment = $this->request->getPost('comment');
+
+        if (!$comment) {
+            return redirect()->back()->with('error', 'Komentar tidak boleh kosong!');
+        }
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('product_reviews');
+
+        // Cek apakah sudah ada review untuk order + produk ini
+        $existing = $builder->where([
+            'order_id' => $orderId,
+            'product_id' => $productId
+        ])->get()->getRow();
+
+        if ($existing) {
+            return redirect()->back()->with('error', 'Anda sudah memberikan ulasan untuk produk ini.');
+        }
+
+        $builder->insert([
+            'order_id' => $orderId,
+            'product_id' => $productId,
+            'comment' => $comment,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        return redirect()->back()->with('success', 'Ulasan berhasil dikirim.');
+    }
+
 }

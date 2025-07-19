@@ -151,7 +151,7 @@
                             <img src="<?= base_url('static/images/faces/default.jpg') ?>">
                         </div>
                         <div class="name ms-4">
-                            <h5 class="mb-1"><?= $review->name ?></h5>
+                            <h5 class="mb-1"><?= $review->nama ?></h5>
                             <p class="mb-0"><?= $review->comment ?></p>
                         </div>
                     </div>

@@ -18,6 +18,7 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
     $routes->get('/faq', 'Home::faq');
     $routes->get('/checkout', 'OrderController::checkout');
     $routes->post('/checkout', 'OrderController::prosesCheckout');
+    $routes->post('order/review/(:num)/(:num)', 'OrderController::submitProductReview/$1/$2');
     $routes->get('/order/(:num)', 'OrderController::order/$1');
     $routes->get('order/struk/(:num)', 'OrderController::strukPDF/$1');
     $routes->group('api', function($routes) {

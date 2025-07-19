@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\ProductReviewModel;
 use App\Models\ReviewModel;
 
 class ReviewController extends BaseController
@@ -10,12 +11,12 @@ class ReviewController extends BaseController
 
     public function __construct()
     {
-        $this->reviewModel = new ReviewModel();
+        $this->reviewModel = new ProductReviewModel();
     }
 
     public function index()
     {
-        $data['reviews'] = $this->reviewModel->findAll();  // Mengambil semua data kategori produk
+        $data['reviews'] = $this->reviewModel->join('orders', 'orders.id = product_reviews.order_id')->asObject()->findAll();  // Mengambil semua data kategori produk
         return view('admin/reviews/index', $data);  // Menampilkan kategori produk di view
     }
 

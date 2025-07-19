@@ -50,6 +50,31 @@
                 <a href="<?= base_url('order/struk/' . $order->id) ?>" class="btn btn-outline-success rounded-pill px-4 shadow-sm mb-4" target="_blank">
                     <i class="bi bi-file-earmark-pdf me-2"></i> Download Struk (PDF)
                 </a>
+                <div class="card mt-4 shadow-sm rounded-4">
+                <?php foreach ($order_items as $item): ?>
+                    <div class="card mb-3 shadow-sm rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <img src="<?= base_url('uploads/products/' . $item->image) ?>" class="rounded me-3" width="60" height="60" alt="<?= $item->name ?>">
+                                <div>
+                                    <h6 class="mb-1"><?= $item->name ?></h6>
+                                    <small><?= $item->quantity ?> x Rp <?= number_format($item->price, 0, ',', '.') ?></small>
+                                </div>
+                            </div>
+
+                            <!-- Form Review -->
+                            <form action="<?= base_url('order/review/' . $order->id . '/' . $item->product_id) ?>" method="post" class="mt-3">
+                                <div class="mb-2">
+                                    <label for="comment-<?= $item->product_id ?>" class="form-label">Komentar untuk produk ini</label>
+                                    <textarea name="comment" id="comment-<?= $item->product_id ?>" rows="2" class="form-control" placeholder="Tulis ulasan Anda..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-success rounded-pill">Kirim Ulasan</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+
             <?php elseif ($order->status == 'completed'): ?>
                 <div class="alert alert-danger" role="alert">
                     Pesanan Anda telah dibatalkan. Silakan hubungi kami untuk informasi lebih lanjut.
