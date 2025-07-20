@@ -2,6 +2,8 @@
 
 <?= $this->section('app') ?>
 
+<?php $role = $role ?? ''; ?>
+
 <div class="content-wrapper">
     <div class="row">
         <div class="col-12 col-lg-12">
@@ -37,11 +39,13 @@
                                             <td> <?= $key + 1 ?> </td>
                                             <td> <?= $review->nama ?> </td>
                                             <td> <?= $review->comment ?> </td>
+                                            <?php if ($role === 'pemilik') : ?>
                                             <td> 
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(<?= $review->id ?>)"> 
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button> 
                                             </td>
+                                            <?php endif; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
