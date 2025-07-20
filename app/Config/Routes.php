@@ -73,6 +73,7 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
             $routes->group('orders', function($routes){
                 $routes->get('', 'Admin\OrderController::index');
                 $routes->post('(:num)/paycash', 'Admin\OrderController::payCash/$1');
+                $routes->post('(:num)/complete', 'Admin\OrderController::completeOrder/$1');
                 $routes->get('get_detail/(:num)', 'Admin\OrderController::get_detail/$1');
                 $routes->post('delete/(:num)', 'Admin\OrderController::delete/$1');
             });

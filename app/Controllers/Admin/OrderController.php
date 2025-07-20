@@ -164,5 +164,32 @@ class OrderController extends BaseController
             ])->setStatusCode(500);
         }
     }
+    public function completeOrder($id = null)
+    {
+        if ($id === null) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID Pesanan tidak ditemukan.'
+            ]);
+        }
+
+        try {
+            // Update status order ke 'processing'
+            $this->orderModel->update($id, [
+                'status' => 'completed'
+            ]);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Pesanan berhasil diselesaikan.'
+            ]);
+        } catch (\Exception $e) {
+            // Tangkap kesalahan dan kembalikan respons error
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
+    }
 
 }

@@ -92,6 +92,10 @@ class OrderController extends BaseController
                     'price'       => $cartItem->subtotal,
                     'subtotal'    => $cartItem->subtotal * $cartItem->qty
                 ]);
+
+                 $this->productModel->where('id', $cartItem->product_id)
+                ->set('stock', 'stock - ' . (int) $cartItem->qty, false)
+                ->update();
             }
 
             // Hapus semua item di keranjang

@@ -26,7 +26,9 @@
                                         <th> No </th>
                                         <th> Nama </th>
                                         <th> Review </th>
+                                        <?php if ($role === 'pemilik') : ?>
                                         <th> Action </th>
+                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -51,11 +51,11 @@
                                         <th> Status Pembayaran</th>
                                         <?php if ($role === 'dapur') : ?>
                                         <th> Status Pesanan</th>
-                                        <th> Aksi</th>
+                                        <th>Aksi</th>
                                         <?php endif; ?>
-                                        <th> Total Pembayaran </th>
                                         <?php if ($role === 'admin') : ?>
-                                            <th>Detail</th>
+                                        <th> Total Pembayaran </th>
+                                        <th>Detail</th>
                                         <?php endif; ?>
 
                                     </tr>
@@ -102,16 +102,56 @@
                                                 ?>
                                                 <span class="badge <?= $badgeClass ?>"><?= $status ?></span>
                                             </td>
-                                            <td> Rp <?= number_format($order->total_price ?? 0, 0, '.', '.') ?> </td>
+                                            <?php if ($role === 'dapur') : ?>
+                                            <td>
+                                                <?php
+                                                    $orderStatus = $order->status ?? 'pending';
+                                                    $badgeStatusOrder = '';
+
+                                                    switch (strtolower($orderStatus)) {
+                                                        case 'processing':
+                                                            $badgeStatusOrder = 'bg-primary';
+                                                            break;
+                                                        case 'pending':
+                                                            $badgeStatusOrder = 'bg-warning';
+                                                            break;
+                                                        case 'completed':
+                                                            $badgeStatusOrder = 'bg-success';
+                                                            break;
+                                                        case 'cancelled':
+                                                            $badgeStatusOrder = 'bg-danger';
+                                                            break;
+                                                        default:
+                                                            $badgeStatusOrder = 'bg-secondary';
+                                                            break;
+                                                    }
+                                                ?>
+                                                <span class="badge <?= $badgeStatusOrder ?>"><?= $orderStatus ?></span>
+                                            </td>
+                                            <?php endif; ?>
+                                            <?php if ($role === 'dapur') : ?>
+                                            <td>
+                                                <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
+                                                    <button type="button" class="btn btn-success btn-sm" id="btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                    <i class="bi bi-cash"></i>
+                                                </button>
+                                                <?php elseif ($order->status === 'processing') : ?>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btn-selesaikan" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                        <i class="bi bi-check"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </td>
+                                            <?php endif; ?>
                                             <?php if ($role === 'admin') : ?>
+                                            <td> Rp <?= number_format($order->total_price ?? 0, 0, '.', '.') ?> </td>
                                             <td>
                                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailModal" data-order-id="<?= $order->id ?>" style="color: white;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </button>
                                                 <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
                                                     <button type="button" class="btn btn-success btn-sm" id="btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
-                                                    <i class="bi bi-cash"></i>
-                                                </button>
+                                                        <i class="bi bi-cash"></i>
+                                                    </button>
                                                 <?php endif; ?>
                                             </td>
                                             <?php endif; ?>
@@ -308,6 +348,54 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Pembayaran Berhasil!",
+                            text: "Pesanan berhasil diselesaikan.",
+                            icon: "success"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Reload halaman untuk memperbarui daftar pesanan
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: response.message || "Terjadi kesalahan saat menyelesaikan pesanan.",
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Terjadi kesalahan saat menghubungi server.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        });
+        
+    })
+
+    $('#btn-selesaikan').on('click', function(){
+        const id = $(this).data('order-id');
+        Swal.fire({
+            title: "Selesaikan Pesanan?",
+            text: "Apakah anda yakin untuk selesaikan pesanan ini!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Selesaikan!"
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `<?= base_url() ?>admin/orders/${id}/complete`,
+                method: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Berhasil!",
                             text: "Pesanan berhasil diselesaikan.",
                             icon: "success"
                         }).then((result) => {
