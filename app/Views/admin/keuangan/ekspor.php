@@ -150,7 +150,7 @@
             ?>
             <h1>Laporan Keuangan</h1>
             <h2>Data Keuangan Paras Selatan</h2>
-            <span class="date-range">Periode: <?= date('d/m/Y', strtotime($from_date)) ?> - <?= date('d/m/Y', strtotime($to_date)) ?></span>
+            <span class="date-range">Periode: <?= date('d/m/Y', strtotime($start_date)) ?> - <?= date('d/m/Y', strtotime($end_date)) ?></span>
         </div>
 
         <div class="summary-cards">

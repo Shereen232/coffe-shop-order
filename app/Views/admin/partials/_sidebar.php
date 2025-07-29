@@ -68,7 +68,7 @@ $role = session()->get('role');
                 <?php endif; ?>
 
                 <!-- Menu Keuangan hanya pemilik  -->
-                <?php if ($role === 'pemilik'): ?>
+                <?php if (in_array($role, ['pemilik', 'admin'])): ?>
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="<?= base_url('admin/keuangan') ?>">
                             <i class="bi bi-cash-stack"></i>

@@ -11,7 +11,7 @@
                         <?php if (session()->get('role') === 'admin') : ?>
                             <a href="<?= base_url() ?>admin/tables/create">
                                 <button type="button" class="btn btn-primary btn-m mb-3">
-                                    <i class="bi bi-plus-circle"></i> Tambah Produk 
+                                    <i class="bi bi-plus-circle"></i> Tambah Meja 
                                 </button>
                             </a>
                         <?php endif; ?>

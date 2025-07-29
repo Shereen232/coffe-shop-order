@@ -10,6 +10,54 @@
   .categories-container .active-category .category-title{
     color: white !important;
   }
+  /* Gambar Produk */
+  .product-item figure {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .product-item img.tab-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .product-item img.tab-image:hover {
+    transform: scale(1.05);
+  }
+
+  /* Gambar Kategori */
+  .category-image {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    object-position: center;
+    margin-bottom: 10px;
+    padding: 8px;
+    
+  }
+
+  /* Perbaikan Tombol Kategori */
+  .category-item {
+    width: 100%;
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .category-title {
+    font-size: 0.9rem;
+    color: #333;
+    text-align: center;
+  }
+
 </style>
 
     <section class="py-3" style="background-image: url('<?=base_url() ?>FoodMart/images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
@@ -234,7 +282,7 @@
                     <div class="col-4 col-md-3 col-lg-2">
                       <div class="product-item d-flex flex-column align-items-center justify-content-center text-center">
                         <button data-id="${category.id}" class="nav-link category-item swiper-slide pt-2 pb-2">
-                          <img src="<?=base_url() ?>/uploads/category/${category.image}" alt="${category.nama_category}">
+                          <img src="<?=base_url() ?>/uploads/category/${category.image}" alt="${category.nama_category}" class="category-image">
                           <h3 class="category-title">${category.nama_category}</h3>
                         </button>
                     </div></div>`;

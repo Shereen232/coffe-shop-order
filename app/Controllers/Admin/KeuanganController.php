@@ -19,48 +19,59 @@ class KeuanganController extends BaseController
         $this->financeModel = new \App\Models\FinanceModel();
     }
 
+
     public function index()
     {
-        $fromDate = $this->request->getGet('from_date');
-        $toDate   = $this->request->getGet('to_date');
+        $startDate = $this->request->getGet('start_date');
+        $endDate   = $this->request->getGet('end_date');
 
-        // Jika salah satu kosong, atur default ke hari ini
-        if (!$fromDate && !$toDate) {
-            $fromDate = $toDate = date('Y-m-d');
-        } elseif (!$fromDate) {
-            $fromDate = $toDate;
-        } elseif (!$toDate) {
-            $toDate = $fromDate;
+        // Default: Hari ini
+        if (!$startDate && !$endDate) {
+            $startDate = $endDate = date('Y-m-d');
+        } elseif (!$startDate) {
+            $startDate = $endDate;
+        } elseif (!$endDate) {
+            $endDate = $startDate;
         }
 
-        // Total Uang Masuk
-        $incomeQuery = $this->financeModel->where('type', 'income')
-                                        ->where('finance_date >=', $fromDate)
-                                        ->where('finance_date <=', $toDate);
-        $totalIncome = $incomeQuery->selectSum('amount')->first()->amount ?? 0;
+        // Tambahkan waktu agar mencakup 1 hari penuh
+        $startDateTime = $startDate . ' 00:00:00';
+        $endDateTime   = $endDate . ' 23:59:59';
 
-        // Total Uang Keluar
-        $expenseQuery = $this->financeModel->where('type', 'expense')
-                                        ->where('finance_date >=', $fromDate)
-                                        ->where('finance_date <=', $toDate);
-        $totalExpense = $expenseQuery->selectSum('amount')->first()->amount ?? 0;
+        // Total Income
+        $totalIncome = $this->financeModel
+            ->where('type', 'income')
+            ->where('finance_date >=', $startDateTime)
+            ->where('finance_date <=', $endDateTime)
+            ->selectSum('amount')
+            ->first()->amount ?? 0;
 
-        // Semua transaksi
+        // Total Expense
+        $totalExpense = $this->financeModel
+            ->where('type', 'expense')
+            ->where('finance_date >=', $startDateTime)
+            ->where('finance_date <=', $endDateTime)
+            ->selectSum('amount')
+            ->first()->amount ?? 0;
+
+        // Transaksi
         $transactions = $this->financeModel
-                            ->where('finance_date >=', $fromDate)
-                            ->where('finance_date <=', $toDate)
-                            ->orderBy('finance_date', 'DESC')
-                            ->findAll();
+            ->where('finance_date >=', $startDateTime)
+            ->where('finance_date <=', $endDateTime)
+            ->orderBy('finance_date', 'DESC')
+            ->findAll();
 
         return view('admin/keuangan/index', [
             'title'        => 'Rekapan Keuangan',
-            'from_date'    => $fromDate,
-            'to_date'      => $toDate,
+            'start_date'   => $startDate,
+            'end_date'     => $endDate,
             'totalIncome'  => $totalIncome,
             'totalExpense' => $totalExpense,
             'transactions' => $transactions,
         ]);
     }
+
+
 
     public function storeExpense()
     {
@@ -87,75 +98,72 @@ class KeuanganController extends BaseController
         ]);
     }
 
-     public function exportPdf()
+    public function exportPdf()
     {
-        // === LOGIKA PENGAMBILAN DATA SAMA PERSIS DENGAN FUNGSI INDEX() ===
-        $fromDate = $this->request->getGet('from_date');
-        $toDate   = $this->request->getGet('to_date');
+        $startDate = $this->request->getGet('start_date');
+        $endDate   = $this->request->getGet('end_date');
 
-        // Jika salah satu kosong, atur default ke hari ini
-        if (!$fromDate && !$toDate) {
-            // Jika tidak ada tanggal yang diberikan, gunakan tanggal default saat ini
-            $fromDate = $toDate = date('Y-m-d');
-        } elseif (!$fromDate) {
-            // Jika fromDate kosong, gunakan toDate sebagai fromDate
-            $fromDate = $toDate;
-        } elseif (!$toDate) {
-            // Jika toDate kosong, gunakan fromDate sebagai toDate
-            $toDate = $fromDate;
+        // Default: hari ini jika tidak dipilih
+        if (!$startDate && !$endDate) {
+            $startDate = $endDate = date('Y-m-d');
+        } elseif (!$startDate) {
+            $startDate = $endDate;
+        } elseif (!$endDate) {
+            $endDate = $startDate;
         }
 
-        // Total Uang Masuk
-        $incomeQuery = $this->financeModel->where('type', 'income')
-                                        ->where('finance_date >=', $fromDate)
-                                        ->where('finance_date <=', $toDate);
-        $totalIncome = $incomeQuery->selectSum('amount')->first()->amount ?? 0;
+        // Tambahkan waktu untuk filter full hari
+        $startDateTime = $startDate . ' 00:00:00';
+        $endDateTime   = $endDate . ' 23:59:59';
 
-        // Total Uang Keluar
-        $expenseQuery = $this->financeModel->where('type', 'expense')
-                                         ->where('finance_date >=', $fromDate)
-                                         ->where('finance_date <=', $toDate);
-        $totalExpense = $expenseQuery->selectSum('amount')->first()->amount ?? 0;
+        // Uang Masuk
+        $totalIncome = $this->financeModel
+            ->where('type', 'income')
+            ->where('finance_date >=', $startDateTime)
+            ->where('finance_date <=', $endDateTime)
+            ->selectSum('amount')
+            ->first()->amount ?? 0;
 
-        // Semua transaksi
+        // Uang Keluar
+        $totalExpense = $this->financeModel
+            ->where('type', 'expense')
+            ->where('finance_date >=', $startDateTime)
+            ->where('finance_date <=', $endDateTime)
+            ->selectSum('amount')
+            ->first()->amount ?? 0;
+
+        // Transaksi
         $transactions = $this->financeModel
-                                ->where('finance_date >=', $fromDate)
-                                ->where('finance_date <=', $toDate)
-                                ->orderBy('finance_date', 'DESC')
-                                ->findAll();
+            ->where('finance_date >=', $startDateTime)
+            ->where('finance_date <=', $endDateTime)
+            ->orderBy('finance_date', 'DESC')
+            ->findAll();
 
         $data = [
-            'from_date' => $fromDate,
-            'to_date' => $toDate,
-            'totalIncome' => $totalIncome,
+            'start_date'   => $startDate,
+            'end_date'     => $endDate,
+            'totalIncome'  => $totalIncome,
             'totalExpense' => $totalExpense,
             'transactions' => $transactions,
-            'nama_toko' => 'Coffee Shop Order', 
+            'nama_toko'    => 'Coffee Shop Order',
         ];
 
-        // Load view HTML yang akan dikonversi ke PDF
-        $html = view('admin/keuangan/ekspor', $data); 
+        // Render HTML dari view
+        $html = view('admin/keuangan/ekspor', $data);
 
         // Inisialisasi Dompdf
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
+        $options = new \Dompdf\Options();
         $options->set('isRemoteEnabled', true);
         $options->set('defaultFont', 'Helvetica');
-        
-        $dompdf = new Dompdf($options);
-        
+
+        $dompdf = new \Dompdf\Dompdf($options);
         $dompdf->loadHtml($html);
-
-        // (Opsional) Set ukuran dan orientasi kertas
         $dompdf->setPaper('A4', 'portrait');
-
-        // Render HTML to PDF
         $dompdf->render();
 
-        // Output PDF ke browser
-        $filename = 'data_keuangan_paras_selatan_' . date('Ymd_His') . '.pdf';
-        $dompdf->stream($filename, ['Attachment' => 0]); // 0 = buka di browser, 1 = download
-        exit();
+        // Stream PDF ke browser
+        $filename = 'laporan_keuangan_' . date('Ymd_His') . '.pdf';
+        $dompdf->stream($filename, ['Attachment' => 0]);
     }
 
 }

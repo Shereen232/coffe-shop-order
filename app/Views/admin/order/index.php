@@ -64,12 +64,12 @@
 
                                     <?php $i=1; foreach ($orders as $order) : ?>
                                         <?php if ($order->payment) :?>
+                                            <?php if ($role === 'dapur' && strtolower($order->payment->payment_status) !== 'settlement') continue; ?>
                                         <tr>
                                             <td> <?= $i++ ?> </td>
                                             <td> <?= $order->table_number ?? 'N/A' ?> </td>
-                                            <?php if ($role === 'admin') : ?>
                                             <td> <?= $order->payment->transaction_id ?? 'Belum Dibayar' ?> </td>
-                                            <?php endif; ?>
+                                            <?php if ($role === 'admin') : ?>
                                             <td> 
                                                 <?php if ($order->payment->payment_method === 'cash_on_delivery') {
                                                     echo "Cash";
@@ -79,6 +79,7 @@
                                                     echo "Unknown";
                                                 } ?> 
                                             </td> 
+                                            <?php endif; ?>
                                             <td>
                                                 <?php
                                                     $status = $order->payment->payment_status ?? 'Pending';
@@ -130,17 +131,23 @@
                                             </td>
                                             <?php endif; ?>
                                             <?php if ($role === 'dapur') : ?>
-                                            <td>
-                                                <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
-                                                    <button type="button" class="btn btn-success btn-sm" id="btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
-                                                    <i class="bi bi-cash"></i>
-                                                </button>
-                                                <?php elseif ($order->status === 'processing') : ?>
-                                                    <button type="button" class="btn btn-primary btn-sm" id="btn-selesaikan" data-order-id="<?= $order->id ?>" style="color: white;">
-                                                        <i class="bi bi-check"></i>
+                                                <td>
+                                                    <!-- Tombol untuk buka modal detail -->
+                                                    <button type="button" class="btn btn-info btn-sm btn-detail-pesanan" data-bs-toggle="modal" data-bs-target="#orderDetailModal" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                        <i class="bi bi-info-circle"></i>
                                                     </button>
-                                                <?php endif; ?>
-                                            </td>
+
+                                                    <!-- Tombol aksi lainnya -->
+                                                    <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
+                                                        <button type="button" class="btn btn-success btn-sm btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                            <i class="bi bi-cash"></i>
+                                                        </button>
+                                                    <?php elseif ($order->status === 'processing') : ?>
+                                                        <button type="button" class="btn btn-primary btn-sm btn-selesaikan" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                            <i class="bi bi-check"></i>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </td>
                                             <?php endif; ?>
                                             <?php if ($role === 'admin') : ?>
                                             <td> Rp <?= number_format($order->total_price ?? 0, 0, '.', '.') ?> </td>
@@ -287,7 +294,7 @@
                                 <p><strong>Trx ID:</strong> ${order.payment.transaction_id || 'Belum Dibayar'}</p>
                                 <p><strong>Metode Pembayaran:</strong> ${order.payment.payment_method || 'Belum Dibayar'}</p>
                                 <p><strong>Status Pembayaran:</strong> <span class="badge ${getBadgeClass(order.payment.payment_status)}">${order.payment.payment_status || 'Pending'}</span></p>
-                                <p><strong>Total Pembayaran:</strong> Rp ${new Intl.NumberFormat('id-ID').format(order.payment.total_payment || order.total_amount || 0)}</p>
+                                <p><strong>Total Pembayaran:</strong> Rp ${new Intl.NumberFormat('id-ID').format(order.total_price || order.total_amount || 0)}</p>
                             `;
                         } else {
                             detailHtml += `<h5>Pembayaran:</h5><p>Belum ada informasi pembayaran.</p>`;
@@ -376,17 +383,17 @@
         
     })
 
-    $('#btn-selesaikan').on('click', function(){
-        const id = $(this).data('order-id');
-        Swal.fire({
-            title: "Selesaikan Pesanan?",
-            text: "Apakah anda yakin untuk selesaikan pesanan ini!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Ya, Selesaikan!"
-        }).then((result) => {
+    $(document).on('click', '.btn-selesaikan', function(){
+    const id = $(this).data('order-id');
+    Swal.fire({
+        title: "Selesaikan Pesanan?",
+        text: "Apakah anda yakin untuk selesaikan pesanan ini!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Selesaikan!"
+    }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
                 url: `<?= base_url() ?>admin/orders/${id}/complete`,
@@ -398,10 +405,8 @@
                             title: "Berhasil!",
                             text: "Pesanan berhasil diselesaikan.",
                             icon: "success"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload(); // Reload halaman untuk memperbarui daftar pesanan
-                            }
+                        }).then(() => {
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -411,7 +416,7 @@
                         });
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function () {
                     Swal.fire({
                         title: "Error!",
                         text: "Terjadi kesalahan saat menghubungi server.",
@@ -420,9 +425,9 @@
                 }
             });
         }
-        });
-        
-    })
+    });
+});
+
 </script>
 
 <?= $this->endSection() ?>

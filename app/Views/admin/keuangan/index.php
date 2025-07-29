@@ -10,18 +10,20 @@
     <section class="row">
         <div class="col-12">
             <!-- Filter Tanggal -->
-            <form method="get" class="row g-3 align-items-end mb-4">
-                <div class="col-md-3">
-                    <label for="from_date" class="form-label">Dari Tanggal</label>
-                    <input type="date" class="form-control" name="from_date" id="from_date" value="<?= esc($from_date ?? '') ?>">
-                </div>
-                <div class="col-md-3">
-                    <label for="to_date" class="form-label">Sampai Tanggal</label>
-                    <input type="date" class="form-control" name="to_date" id="to_date" value="<?= esc($to_date ?? '') ?>">
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary me-2">Tampilkan</button>
-                    <a href="<?= base_url('admin/keuangan/ekspor') ?>" class="btn btn-secondary">Reset</a>
+            <form action="<?= base_url('admin/keuangan') ?>" method="GET" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4 col-lg-3">
+                        <label for="start_date" class="form-label">Dari Tanggal:</label>
+                        <input type="text" class="form-control flatpickr" id="start_date" name="start_date" placeholder="Pilih Tanggal Mulai" value="<?= esc($start_date ?? '') ?>">
+                    </div>
+                    <div class="col-md-4 col-lg-3">
+                        <label for="end_date" class="form-label">Sampai Tanggal:</label>
+                        <input type="text" class="form-control flatpickr" id="end_date" name="end_date" placeholder="Pilih Tanggal Akhir" value="<?= esc($end_date ?? '') ?>">
+                    </div>
+                    <div class="col-md-4 col-lg-3">
+                        <button type="submit" class="btn btn-primary me-2">Filter</button>
+                        <a href="<?= base_url('admin/keuangan') ?>" class="btn btn-secondary">Reset Filter</a>
+                    </div>
                 </div>
             </form>
 
@@ -77,7 +79,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Detail Transaksi</h5>
-                    <a href="<?= base_url('admin/keuangan/ekspor') ?>?from_date=<?= esc($from_date ?? '') ?>&to_date=<?= esc($to_date ?? '') ?>" class="btn btn-danger btn-sm" target="_blank">
+                    <a href="<?= base_url('admin/keuangan/ekspor') ?>?start_date=<?= esc($start_date ?? '') ?>&end_date=<?= esc($end_date ?? '') ?>" class="btn btn-danger btn-sm" target="_blank">
                         <i class="bi bi-file-earmark-pdf"></i> Ekspor PDF
                     </a>
                 </div>
@@ -172,6 +174,21 @@
     </div>
 </div>
 
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    flatpickr(".flatpickr", {
+        dateFormat: "Y-m-d",
+        defaultDate: "today",
+        allowInput: true,
+        locale: "id" // bahasa Indonesia
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('formTambahPengeluaran');
