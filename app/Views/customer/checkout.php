@@ -59,10 +59,10 @@
                 <img src="<?= base_url('uploads/products/' . $item->image) ?>" class="rounded me-3" width="60" height="60" alt="<?= $item->name ?>">
                 <div>
                     <h6 class="mb-1"><?= $item->name ?></h6>
-                    <small class="text-muted"><?= $item->qty ?> x Rp <?= number_format($item->subtotal, 0, ',', '.') ?></small>
+                    <small class="text-muted"><?= $item->qty ?> x Rp <?= number_format($item->price, 0, ',', '.') ?></small>
                 </div>
                 <div class="ms-auto fw-semibold">
-                    Rp <?= number_format($item->subtotal * $item->qty, 0, ',', '.') ?>
+                    Rp <?= number_format($item->qty * $item->price, 0, ',', '.') ?>
                 </div>
                 </div>
             <?php endforeach; ?>

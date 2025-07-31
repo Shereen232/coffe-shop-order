@@ -47,9 +47,10 @@
                                         <th> Trx ID </th>
                                         <?php if ($role === 'admin') : ?>
                                         <th> Methode Pembayaran </th>
-                                        <?php endif; ?>
                                         <th> Status Pembayaran</th>
+                                        <?php endif; ?>
                                         <?php if ($role === 'dapur') : ?>
+                                        <th> Detail Pesanan </th>
                                         <th> Status Pesanan</th>
                                         <th>Aksi</th>
                                         <?php endif; ?>
@@ -79,7 +80,6 @@
                                                     echo "Unknown";
                                                 } ?> 
                                             </td> 
-                                            <?php endif; ?>
                                             <td>
                                                 <?php
                                                     $status = $order->payment->payment_status ?? 'Pending';
@@ -103,7 +103,19 @@
                                                 ?>
                                                 <span class="badge <?= $badgeClass ?>"><?= $status ?></span>
                                             </td>
+                                            <?php endif; ?>
                                             <?php if ($role === 'dapur') : ?>
+                                            <td> 
+                                                <?php if (!empty($order->items)) : ?>
+                                                    <ul class="mb-0 ps-3">
+                                                        <?php foreach ($order->items as $item): ?>
+                                                            <li><?= esc($item->product_name) ?> (<?= esc($item->quantity) ?>x)</li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
+                                                <?php else : ?>
+                                                    <span class="text-muted">Tidak ada item</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td>
                                                 <?php
                                                     $orderStatus = $order->status ?? 'pending';
@@ -132,11 +144,6 @@
                                             <?php endif; ?>
                                             <?php if ($role === 'dapur') : ?>
                                                 <td>
-                                                    <!-- Tombol untuk buka modal detail -->
-                                                    <button type="button" class="btn btn-info btn-sm btn-detail-pesanan" data-bs-toggle="modal" data-bs-target="#orderDetailModal" data-order-id="<?= $order->id ?>" style="color: white;">
-                                                        <i class="bi bi-info-circle"></i>
-                                                    </button>
-
                                                     <!-- Tombol aksi lainnya -->
                                                     <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
                                                         <button type="button" class="btn btn-success btn-sm btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
@@ -301,6 +308,17 @@
                         }
                         
                         modal.find('.modal-body').html(detailHtml);
+
+                        // Tambahkan tombol Edit Item Pesanan di bawah detail
+                        if (order.status === 'pending') {
+                            modal.find('.modal-body').append(`
+                                <div class="mt-3 text-end">
+                                    <button type="button" class="btn btn-warning btn-edit-items" data-order-id="${order.id}">
+                                        <i class="bi bi-pencil-square"></i> Edit Item Pesanan
+                                    </button>
+                                </div>
+                            `);
+                        }
                     } else {
                         modal.find('.modal-body').html('<p class="text-danger">Gagal memuat detail pesanan.</p>');
                     }
@@ -428,6 +446,77 @@
     });
 });
 
+$(document).on('click', '.btn-edit-items', function() {
+    const orderId = $(this).data('order-id');
+    // Ambil semua produk dari server
+    $.ajax({
+        url: "<?= base_url('admin/products/all') ?>", // Buat endpoint untuk ambil semua produk
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            if (response.success) {
+                let products = response.products;
+                let html = `<form id="editOrderItemsForm">
+                    <input type="hidden" name="order_id" value="${orderId}">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                products.forEach(product => {
+                    html += `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>
+                                <input type="number" min="0" name="qty[${product.id}]" value="0" class="form-control" style="width:80px;">
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += `</tbody></table>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </form>`;
+
+                Swal.fire({
+                    title: "Edit Item Pesanan",
+                    html: html,
+                    showConfirmButton: false,
+                    width: 700,
+                    didOpen: () => {
+                        $('#editOrderItemsForm').on('submit', function(e) {
+                            e.preventDefault();
+                            $.ajax({
+                                url: "<?= base_url('admin/orders/update_items') ?>",
+                                type: "POST",
+                                data: $(this).serialize(),
+                                dataType: "json",
+                                success: function(res) {
+                                    if (res.success) {
+                                        Swal.fire("Berhasil", "Item pesanan berhasil diupdate!", "success")
+                                            .then(() => location.reload());
+                                    } else {
+                                        Swal.fire("Gagal", res.message, "error");
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire("Error", "Terjadi kesalahan server.", "error");
+                                }
+                            });
+                        });
+                    }
+                });
+            } else {
+                Swal.fire("Gagal", "Gagal mengambil data produk.", "error");
+            }
+        },
+        error: function() {
+            Swal.fire("Error", "Terjadi kesalahan server.", "error");
+        }
+    });
+});
 </script>
 
 <?= $this->endSection() ?>

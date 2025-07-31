@@ -76,6 +76,11 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
                 $routes->post('(:num)/complete', 'Admin\OrderController::completeOrder/$1');
                 $routes->get('get_detail/(:num)', 'Admin\OrderController::get_detail/$1');
                 $routes->post('delete/(:num)', 'Admin\OrderController::delete/$1');
+                $routes->post('update_items', 'Admin\OrderController::update_items');
+            });
+
+            $routes->group('products', function($routes){
+                $routes->get('all', 'Admin\ProductController::all');
             });
 
             $routes->group('payments', function($routes){

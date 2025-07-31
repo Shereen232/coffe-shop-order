@@ -7,6 +7,7 @@ use App\Models\OrderModel; // Asumsikan Anda memiliki OrderModel
 use App\Models\OrderItemModel; // Asumsikan Anda memiliki OrderItemModel
 use App\Models\PaymentModel; // Asumsikan Anda memiliki PaymentModel
 use App\Models\TableModel; // Asumsikan Anda memiliki TableModel (untuk join ke tabel)
+use App\Models\ProductModel; // Asumsikan Anda memiliki ProductModel
 
 class OrderController extends BaseController
 {
@@ -15,6 +16,7 @@ class OrderController extends BaseController
     protected $paymentModel;
     protected $tableModel; // Jika digunakan secara langsung di controller
     protected $financeModel;
+    protected $productModel; // Jika Anda perlu mengakses produk
 
     public function __construct()
     {
@@ -23,6 +25,7 @@ class OrderController extends BaseController
         $this->paymentModel = new PaymentModel();
         $this->tableModel = new TableModel(); // Inisialisasi TableModel jika diperlukan
         $this->financeModel = new \App\Models\FinanceModel();
+        $this->productModel = new ProductModel(); // Inisialisasi ProductModel jika diperlukan
     }
 
     public function index()
@@ -146,25 +149,37 @@ class OrderController extends BaseController
                 'payment_status' => 'settlement'
             ])->update();
 
+            // Kurangi stok produk setelah pembayaran settlement
+            $orderItems = $this->orderItemModel
+                ->where('order_id', $id)
+                ->findAll();
+
+            foreach ($orderItems as $item) {
+                $this->productModel
+                    ->where('id', $item->product_id)
+                    ->set('stock', 'stock - ' . (int) $item->quantity, false)
+                    ->update();
+            }
+
             $this->financeModel->save([
                 'type' => 'income',
-                'amount' => $this->orderModel->find($id)->total_price, // Ambil total harga dari order
+                'amount' => $this->orderModel->find($id)->total_price,
                 'notes' => 'Pembayaran cash untuk order ID ' . $id,
             ]);
 
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Pembayaran berhasil dilakukan.'
+                'message' => 'Pembayaran berhasil dilakukan '
             ]);
         } catch (\Exception $e) {
-            // Tangkap kesalahan dan kembalikan respons error
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage()
             ])->setStatusCode(500);
         }
     }
-    public function completeOrder($id = null)
+
+   public function completeOrder($id = null)
     {
         if ($id === null) {
             return $this->response->setJSON([
@@ -174,7 +189,33 @@ class OrderController extends BaseController
         }
 
         try {
-            // Update status order ke 'processing'
+            // Cek apakah pesanan ada
+            $order = $this->orderModel->find($id);
+            if (!$order) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Pesanan tidak ditemukan.'
+                ]);
+            }
+
+            // Cek apakah sudah diselesaikan sebelumnya
+            if ($order['status'] === 'completed') {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Pesanan sudah diselesaikan sebelumnya.'
+                ]);
+            }
+
+            // Ambil data pembayaran
+            $payment = $this->paymentModel->where('order_id', $id)->first();
+            if (!$payment || $payment['payment_status'] !== 'settlement') {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Pembayaran belum dilakukan.'
+                ]);
+            }
+
+            // Update status pesanan jadi completed
             $this->orderModel->update($id, [
                 'status' => 'completed'
             ]);
@@ -184,12 +225,45 @@ class OrderController extends BaseController
                 'message' => 'Pesanan berhasil diselesaikan.'
             ]);
         } catch (\Exception $e) {
-            // Tangkap kesalahan dan kembalikan respons error
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan saat menyelesaikan pesanan: ' . $e->getMessage()
             ])->setStatusCode(500);
         }
+    }
+
+    public function update_items()
+    {
+        $orderId = $this->request->getPost('order_id');
+        $qtys = $this->request->getPost('qty');
+
+        if (!$orderId || !is_array($qtys)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Data tidak valid']);
+        }
+
+        // Hapus semua item lama
+        $this->orderItemModel->where('order_id', $orderId)->delete();
+
+        $total = 0;
+        foreach ($qtys as $productId => $qty) {
+            if ($qty > 0) {
+                $product = $this->productModel->find($productId);
+                $subtotal = $product['price'] * $qty;
+                $this->orderItemModel->save([
+                    'order_id' => $orderId,
+                    'product_id' => $productId,
+                    'quantity' => $qty,
+                    'price' => $product['price'],
+                    'subtotal' => $subtotal
+                ]);
+                $total += $subtotal;
+            }
+        }
+
+        // Update total_price pada order
+        $this->orderModel->update($orderId, ['total_price' => $total]);
+
+        return $this->response->setJSON(['success' => true]);
     }
 
 }

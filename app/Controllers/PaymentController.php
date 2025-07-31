@@ -33,27 +33,39 @@ class PaymentController extends BaseController
 
         $data = $this->request->getJSON();
 
-        // Cek jika data tersedia
         if (!isset($data->order_id) || !isset($data->transaction_status)) {
             return $this->response->setJSON(['status' => 'failed', 'message' => 'Invalid data'])->setStatusCode(400);
         }
 
-        // Update status order
-        $order = $orderModel->find($data->order_id);
+        // Update status order jadi "processing"
+        $order = $this->orderModel->find($data->order_id);
         if ($order) {
-            $orderModel->update($data->order_id, ['status' => 'processing']);
+            $this->orderModel->update($data->order_id, ['status' => 'processing']);
         }
 
         // Update status pembayaran
-        $paymentModel->where('order_id', $data->order_id)
+        $this->paymentModel->where('order_id', $data->order_id)
             ->set(['payment_status' => $data->transaction_status])
             ->update();
 
+        // Catat keuangan
         $this->financeModel->save([
             'type' => 'income',
-            'amount' => $data->gross_amount, // Ambil total harga dari order
+            'amount' => $data->gross_amount,
             'notes' => 'Pembayaran online untuk order ID ' . $data->order_id,
         ]);
+
+        // Kurangi stok hanya jika pembayaran settlement
+        if ($data->transaction_status === 'settlement') {
+            $orderItems = $this->orderItemModel->where('order_id', $data->order_id)->findAll();
+
+            foreach ($orderItems as $item) {
+                $this->productModel
+                    ->where('id', $item['product_id'])
+                    ->set('stock', 'stock - ' . (int) $item['quantity'], false)
+                    ->update();
+            }
+        }
 
         return $this->response->setJSON(['status' => 'success']);
 

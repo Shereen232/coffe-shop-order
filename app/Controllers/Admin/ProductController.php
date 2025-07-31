@@ -46,7 +46,7 @@ class ProductController extends BaseController
             'name'        => 'required|min_length[3]|max_length[255]|is_unique[products.name]',
             'price'       => 'required|decimal',
             'stock'       => 'required|integer',
-            'category_id' => 'required|integer',
+            'category_id'
         ]);
 
         // Validasi data produk
@@ -182,6 +182,12 @@ class ProductController extends BaseController
             'success' => true,
             'message' => $message
         ]);
+    }
+
+    public function all()
+    {
+        $products = $this->productModel->findAll();
+        return $this->response->setJSON(['success' => true, 'products' => $products]);
     }
 
 }

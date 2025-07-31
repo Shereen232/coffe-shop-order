@@ -48,7 +48,11 @@ class OrderController extends BaseController
 
         $data = [
             'title' => 'Checkout',
-            'orders' => $this->cartItemModel->select('cart_items.*, products.image, products.name')->where('cart_id', $cart->id)->join('products', 'cart_items.product_id = products.id')->findAll(),
+            'orders' => $this->cartItemModel
+                ->select('cart_items.*, products.image, products.name, products.price') 
+                ->where('cart_id', $cart->id)
+                ->join('products', 'cart_items.product_id = products.id')
+                ->findAll(),
             'total' => $cart->total,
             'paymentSetting' => $paymentSetting,
         ];
@@ -93,9 +97,9 @@ class OrderController extends BaseController
                     'subtotal'    => $cartItem->subtotal * $cartItem->qty
                 ]);
 
-                 $this->productModel->where('id', $cartItem->product_id)
-                ->set('stock', 'stock - ' . (int) $cartItem->qty, false)
-                ->update();
+                //  $this->productModel->where('id', $cartItem->product_id)
+                // ->set('stock', 'stock - ' . (int) $cartItem->qty, false)
+                // ->update();
             }
 
             // Hapus semua item di keranjang
