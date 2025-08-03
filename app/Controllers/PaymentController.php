@@ -27,10 +27,6 @@ class PaymentController extends BaseController
 
     public function updateStatus()
     {
-
-        $orderModel = new \App\Models\OrderModel();
-        $paymentModel = new \App\Models\PaymentModel();
-
         $data = $this->request->getJSON();
 
         if (!isset($data->order_id) || !isset($data->transaction_status)) {
@@ -61,8 +57,8 @@ class PaymentController extends BaseController
 
             foreach ($orderItems as $item) {
                 $this->productModel
-                    ->where('id', $item['product_id'])
-                    ->set('stock', 'stock - ' . (int) $item['quantity'], false)
+                    ->where('id', $item->product_id)
+                    ->set('stock', 'stock - ' . (int) $item->quantity, false)
                     ->update();
             }
         }

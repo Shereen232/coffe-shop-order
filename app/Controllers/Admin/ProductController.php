@@ -24,6 +24,7 @@ class ProductController extends BaseController
             ->withDeleted() 
             ->select('products.*, category_product.nama_category as category_nama_category')
             ->join('category_product', 'category_product.id = products.category_id', 'left')
+            ->where('category_product.deleted_at', null)
             ->findAll();
 
         return view('admin/product/index', $data);

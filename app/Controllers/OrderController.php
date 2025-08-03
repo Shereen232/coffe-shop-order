@@ -10,12 +10,13 @@ use App\Models\PaymentModel;
 use App\Models\ProductModel;
 use App\Models\SettingModel;
 use App\Models\TableModel;
+use App\Models\UserModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 class OrderController extends BaseController
 {
-    protected $productModel, $cartModel, $cartItemModel, $orderModel, $orderItemModel, $tableModel, $paymentModel, $settingModel;
+    protected $productModel, $cartModel, $cartItemModel, $orderModel, $orderItemModel, $tableModel, $paymentModel, $settingModel, $kasirModel;
     public function __construct()
     {
         $this->productModel = new ProductModel();
@@ -26,6 +27,7 @@ class OrderController extends BaseController
         $this->tableModel = new TableModel();
         $this->paymentModel = new PaymentModel();
         $this->settingModel = new SettingModel();
+        $this->kasirModel = new UserModel();
     }
 
     public function checkout()
@@ -93,7 +95,7 @@ class OrderController extends BaseController
                     'order_id'    => $orderId,
                     'product_id'  => $cartItem->product_id,
                     'quantity'    => $cartItem->qty,
-                    'price'       => $cartItem->subtotal,
+                    'price'       => $cartItem->subtotal/$cartItem->qty,
                     'subtotal'    => $cartItem->subtotal * $cartItem->qty
                 ]);
 
@@ -152,8 +154,10 @@ class OrderController extends BaseController
         $order_items = $this->orderItemModel->select('order_items.*, products.image, products.name')->where('order_id', $id)->join('products', 'order_items.product_id = products.id')->findAll();
         $table = $this->tableModel->asObject()->where('id', $order->user_id)->first();
         $payment = $this->paymentModel->where('order_id', $id)->first();
+        $kasir = $this->kasirModel->where('id', $order->kasir_id)->first();
         $order->table = $table->table_number;
         $order->payment = $payment;
+        $order->kasir = $kasir;
 
         return view('customer/order', [
             'title' => 'Detail Pesanan',
@@ -168,8 +172,10 @@ class OrderController extends BaseController
         $orderItems = $this->orderItemModel->select('order_items.*, products.image, products.name')->where('order_id', $id)->join('products', 'order_items.product_id = products.id')->findAll();
         $table = $this->tableModel->asObject()->where('id', $order->user_id)->first();
         $payment = $this->paymentModel->where('order_id', $id)->first();
+        $kasir = $this->kasirModel->where('id', $order->kasir_id)->first();
         $order->table = $table->table_number;
         $order->payment = $payment;
+        $order->kasir = $kasir;
 
         if (!$order) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Order tidak ditemukan");

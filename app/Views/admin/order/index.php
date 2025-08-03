@@ -43,6 +43,7 @@
                                 <thead>
                                     <tr>
                                         <th> ID Pesanan </th>
+                                        <th> Nama </th>
                                         <th> No Meja </th>
                                         <th> Trx ID </th>
                                         <?php if ($role === 'admin') : ?>
@@ -51,6 +52,7 @@
                                         <?php endif; ?>
                                         <?php if ($role === 'dapur') : ?>
                                         <th> Detail Pesanan </th>
+                                        <th> Waktu Pesanan </th>
                                         <th> Status Pesanan</th>
                                         <th>Aksi</th>
                                         <?php endif; ?>
@@ -68,6 +70,7 @@
                                             <?php if ($role === 'dapur' && strtolower($order->payment->payment_status) !== 'settlement') continue; ?>
                                         <tr>
                                             <td> <?= $i++ ?> </td>
+                                            <td> <?= $order->nama ?? 'N/A' ?> </td>
                                             <td> <?= $order->table_number ?? 'N/A' ?> </td>
                                             <td> <?= $order->payment->transaction_id ?? 'Belum Dibayar' ?> </td>
                                             <?php if ($role === 'admin') : ?>
@@ -116,6 +119,7 @@
                                                     <span class="text-muted">Tidak ada item</span>
                                                 <?php endif; ?>
                                             </td>
+                                            <td> <?= $order->created_at ?? 'N/A' ?> </td>
                                             <td>
                                                 <?php
                                                     $orderStatus = $order->status ?? 'pending';
@@ -163,7 +167,7 @@
                                                     <i class="bi bi-info-circle"></i>
                                                 </button>
                                                 <?php if ($order->payment->payment_method === 'cash_on_delivery' && $order->payment->payment_status === 'pending') : ?>
-                                                    <button type="button" class="btn btn-success btn-sm" id="btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
+                                                    <button type="button" class="btn btn-success btn-sm btn-bayar-cash" data-order-id="<?= $order->id ?>" style="color: white;">
                                                         <i class="bi bi-cash"></i>
                                                     </button>
                                                 <?php endif; ?>
@@ -350,7 +354,7 @@
         }
     });
 
-    $('#btn-bayar-cash').on('click', function(){
+    $(document).on('click', '.btn-bayar-cash', function () {
         const id = $(this).data('order-id');
         Swal.fire({
             title: "Selesaikan Pembayaran?",
@@ -361,45 +365,42 @@
             cancelButtonColor: "#d33",
             confirmButtonText: "Ya, Selesaikan!"
         }).then((result) => {
-        if (result.isConfirmed) {
-            console.log("Button clicked, proceeding with payment...");
-            
-            
-            $.ajax({
-                url: `<?= base_url() ?>admin/orders/${id}/paycash`,
-                method: 'POST',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success) {
+            if (result.isConfirmed) {
+                console.log("Button clicked, proceeding with payment...");
+
+                $.ajax({
+                    url: `<?= base_url() ?>admin/orders/${id}/paycash`,
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Pembayaran Berhasil!",
+                                text: "Pesanan berhasil diselesaikan.",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Gagal!",
+                                text: response.message || "Terjadi kesalahan saat menyelesaikan pesanan.",
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function () {
                         Swal.fire({
-                            title: "Pembayaran Berhasil!",
-                            text: "Pesanan berhasil diselesaikan.",
-                            icon: "success"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload(); // Reload halaman untuk memperbarui daftar pesanan
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Gagal!",
-                            text: response.message || "Terjadi kesalahan saat menyelesaikan pesanan.",
+                            title: "Error!",
+                            text: "Terjadi kesalahan saat menghubungi server.",
                             icon: "error"
                         });
                     }
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Terjadi kesalahan saat menghubungi server.",
-                        icon: "error"
-                    });
-                }
-            });
-        }
+                });
+            }
         });
-        
-    })
+    });
+
 
     $(document).on('click', '.btn-selesaikan', function(){
     const id = $(this).data('order-id');

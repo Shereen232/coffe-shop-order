@@ -18,8 +18,14 @@
                 <div class="card-body">
                     <h5 class="fw-semibold mb-3">Informasi Pemesan</h5>
                     <ul class="list-unstyled">
+                        <?php if (!empty($order->kasir->name)) : ?>
+                            <li><strong>Kasir: </strong><?= $order->kasir->name ?></li>
+                        <?php elseif (empty($order->kasir->name) && $order->payment->payment_status == 'settlement'): ?>
+                            <li><strong>Kasir: </strong>Admin</li>
+                        <?php endif; ?>
                         <li><strong>Trx ID: </strong><?= $order->payment->transaction_id ?></li>
                         <li><strong>Nomor Meja: </strong><?= $order->table ?></li>
+                        <li><strong>Nama:</strong> <?= $order->nama ?></li>
                         <li><strong>Metode Pembayaran:</strong> 
                             <?= $order->payment->payment_method === 'cash_on_delivery' ? 'Cash' : $order->payment->payment_method ?>
                         </li>

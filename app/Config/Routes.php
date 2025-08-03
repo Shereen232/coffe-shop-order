@@ -22,17 +22,17 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
     $routes->get('/order/(:num)', 'OrderController::order/$1');
     $routes->get('order/struk/(:num)', 'OrderController::strukPDF/$1');
     $routes->group('api', function($routes) {
-    $routes->post('(:num)/order', 'PaymentController::order/$1');
-    $routes->get('categories', 'CategoryController::index');
-    $routes->get('products', 'ProductController::index');
-    $routes->get('banners', 'ProductController::banners');
-    $routes->post('(:num)/addcart', 'ProductController::addcart/$1');
-    $routes->get('(:num)/getcart', 'ProductController::getcart/$1');
-    $routes->post('(:num)/deleteitem', 'ProductController::deleteItem/$1');
-    $routes->get('search', 'ProductController::search');
-    $routes->get('get/qr/(:segment)', 'Admin\TableController::generateQr/$1');
-    $routes->post('status/payment', 'PaymentController::updateStatus');
-});
+        $routes->post('(:num)/order', 'PaymentController::order/$1');
+        $routes->get('categories', 'CategoryController::index');
+        $routes->get('products', 'ProductController::index');
+        $routes->get('banners', 'ProductController::banners');
+        $routes->post('(:num)/addcart', 'ProductController::addcart/$1');
+        $routes->get('(:num)/getcart', 'ProductController::getcart/$1');
+        $routes->post('(:num)/deleteitem', 'ProductController::deleteItem/$1');
+        $routes->get('search', 'ProductController::search');
+        $routes->get('get/qr/(:segment)', 'Admin\TableController::generateQr/$1');
+        $routes->post('status/payment', 'PaymentController::updateStatus');
+    });
 
     //ADMIN MENU
     $routes->group('admin', function($routes) {
@@ -77,6 +77,7 @@ $routes->group('auth', ['filter' => 'redirectIfLoggedIn'], function($routes){
                 $routes->get('get_detail/(:num)', 'Admin\OrderController::get_detail/$1');
                 $routes->post('delete/(:num)', 'Admin\OrderController::delete/$1');
                 $routes->post('update_items', 'Admin\OrderController::update_items');
+                $routes->get('riwayat', 'Admin\OrderController::riwayat');
             });
 
             $routes->group('products', function($routes){

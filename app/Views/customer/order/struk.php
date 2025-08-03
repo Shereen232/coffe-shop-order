@@ -14,8 +14,16 @@
 <body>
     <h2>Struk Pembelian</h2>
 
+    <p><strong>Kasir: </strong>
+    <?php if (!empty($order->kasir->name)) : ?>
+        <?= $order->kasir->name ?>
+    <?php else: ?>
+        Admin
+    <?php endif; ?>
+    </p>
     <p><strong>Trx ID:</strong> <?= $order->payment->transaction_id ?></p>
     <p><strong>Nomor Meja:</strong> <?= $order->table ?></p>
+    <p><strong>Nama:</strong> <?= $order->nama ?></p>
     <p><strong>Metode Pembayaran:</strong> <?= $order->payment->payment_method ?></p>
     <p><strong>Status:</strong> <?= esc($order->payment->payment_status) ?></p>
     <p><strong>Tanggal:</strong> <?= date('d M Y, H:i', strtotime($order->created_at)) ?></p>

@@ -20,16 +20,15 @@ $role = session()->get('role');
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <!-- Dashboard -->
-                <li class="sidebar-item">
-                    <a href="<?= base_url('admin') ?>" class='sidebar-link'>
-                        <i class="bi bi-grid-fill"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-
-                <!-- Menu untuk pemilik dan Admin -->
+                <!-- Menu Dashboard untuk pemilik dan admin -->
                 <?php if ($role === 'pemilik' || $role === 'admin'): ?>
+                    <li class="sidebar-item">
+                        <a href="<?= base_url('admin') ?>" class='sidebar-link'>
+                            <i class="bi bi-grid-fill"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="<?= base_url('admin/category-product') ?>">
                             <i class="bi bi-archive"></i>
@@ -63,6 +62,15 @@ $role = session()->get('role');
                         <a class="sidebar-link" href="<?= base_url('admin/orders') ?>">
                             <i class="bi bi-cart"></i>
                             <span>Manajemen Pesanan</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($role === 'dapur'): ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="<?= base_url('admin/orders/riwayat') ?>">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Riwayat Pesanan</span>
                         </a>
                     </li>
                 <?php endif; ?>

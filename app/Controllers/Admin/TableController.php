@@ -34,12 +34,24 @@ class TableController extends Controller
 
     public function store()
     {
+        $rules = [
+            'table_number' => 'required|is_unique[tables.table_number]',
+        ];
+
+        if (!$this->validate($rules)) {
+            $tableNumber = $this->request->getPost('table_number');
+            session()->setFlashdata('error', 'Gagal menambah meja dengan nomor <strong>' . esc($tableNumber) . '</strong>: Nomor meja sudah terdaftar, silakan gunakan yang lain.');
+            return redirect()->back()->withInput();
+        }
+
+
         $this->tableModel->insert([
             'table_number' => $this->request->getPost('table_number'),
             'status'       => $this->request->getPost('status'),
         ]);
 
-        return redirect()->to('admin/tables')->with('success', 'Meja berhasil ditambahkan!');
+        session()->setFlashdata('success', 'Meja dengan nomor <strong>' . esc($this->request->getPost('table_number')) . '</strong> berhasil ditambahkan!');
+        return redirect()->to('admin/tables');
     }
 
     public function edit($id)
@@ -50,12 +62,24 @@ class TableController extends Controller
 
     public function update($id)
     {
+        $rules = [
+            'table_number' => 'required|is_unique[tables.table_number,id,{id}]',
+        ];
+
+        if (!$this->validate($rules)) {
+            $tableNumber = $this->request->getPost('table_number');
+            session()->setFlashdata('error', 'Gagal menambah meja dengan nomor <strong>' . esc($tableNumber) . '</strong>: Nomor meja sudah terdaftar, silakan gunakan yang lain.');
+            return redirect()->back()->withInput();
+        }
+
+
         $this->tableModel->update($id, [
             'table_number' => $this->request->getPost('table_number'),
             'status'       => $this->request->getPost('status'),
         ]);
 
-        return redirect()->to('admin/tables')->with('success', 'Meja berhasil diperbarui!');
+        session()->setFlashdata('success', 'Meja dengan nomor <strong>' . esc($this->request->getPost('table_number')) . '</strong> berhasil diperbarui!');
+        return redirect()->to('admin/tables');
     }
 
     public function delete($id)

@@ -20,6 +20,11 @@ class CategoryModel extends Model
         return $this->withDeleted()->update($id, ['deleted_at' => null]);
     }
 
+    public function onlyActive()
+    {
+        return $this->where('deleted_at', null);
+    }
+
     // Menambahkan validation rules jika diperlukan
     protected $validationRules = [
         'nama_category' => 'required|min_length[3]|max_length[255]',
