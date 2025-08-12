@@ -25,10 +25,6 @@
     <!-- Info Produk -->
     <div class="col-lg-3">
       <h3 class="fw-bold"><?= $product->name ?></h3>
-      <div class="d-flex align-items-center mb-2">
-        <span class="me-2 text-muted">1 UNIT</span>
-        <i class="bi bi-star-fill text-warning"></i>
-      </div>
 
       <h4 class="text-success fw-bold mb-3">Rp <?= number_format($product->price, 0, ',', '.') ?></h4>
 

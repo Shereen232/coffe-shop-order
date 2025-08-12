@@ -160,11 +160,23 @@ class CategoryController extends BaseController
             ])->setStatusCode(404);
         }
 
+        $productModel = new \App\Models\ProductModel();
+
         if ($action === 'nonaktif') {
-            $this->categoryModel->delete($id); // Soft delete
-            $message = 'Kategori berhasil dinonaktifkan.';
+            $this->categoryModel->delete($id); // Soft delete kategori
+            // Soft delete semua produk dalam kategori ini
+            $products = $productModel->where('category_id', $id)->findAll();
+            foreach ($products as $product) {
+                $productModel->delete($product['id']); // Soft delete produk
+            }
+            $message = 'Kategori dan semua produk di dalamnya berhasil dinonaktifkan.';
         } elseif ($action === 'aktif') {
-            $this->categoryModel->restore($id); // Gunakan restore method
+            $this->categoryModel->restore($id); // Restore kategori
+            // (Opsional) Restore semua produk dalam kategori ini
+            $products = $productModel->withDeleted()->where('category_id', $id)->findAll();
+            foreach ($products as $product) {
+                $productModel->update($product['id'], ['deleted_at' => null]);
+            }
             $message = 'Kategori berhasil diaktifkan kembali.';
         } else {
             return $this->response->setJSON([

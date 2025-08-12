@@ -100,6 +100,8 @@ class ProductController extends BaseController
         $this->cartModel->save([
             'session_id' => session('session')['table_id'],
             'total'      => array_sum(array_column($cartCookie, 'subtotal')),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => null
         ]);
         $cartID = $this->cartModel->insertID();
 

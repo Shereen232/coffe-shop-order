@@ -34,7 +34,9 @@
                         <!-- Harga Produk -->
                         <div class="form-group">
                             <label for="price">Harga</label>
-                            <input type="number" class="form-control" name="price" value="<?= old('price', $product['price']) ?>" required>
+                            <input type="text" class="form-control" name="price" 
+                                value="<?= old('price', number_format($product['price'], 0, ',', '.')) ?>" 
+                                required>   <!-- desimal -->
                             <small class="text-danger"><?= session()->getFlashdata('validation')['price'] ?? '' ?></small>
                         </div>
 

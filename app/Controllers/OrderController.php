@@ -85,6 +85,8 @@ class OrderController extends BaseController
                 'nama'         => $this->request->getPost('nama'), 
                 'total_price'  => $cartModel->total,
                 'status'       => 'pending',
+                'created_at'   => date('Y-m-d H:i:s'),
+                'updated_at'   => null,
             ]);
 
 

@@ -47,7 +47,7 @@ class ProductController extends BaseController
             'name'        => 'required|min_length[3]|max_length[255]|is_unique[products.name]',
             'price'       => 'required|decimal',
             'stock'       => 'required|integer',
-            'category_id'
+            'category_id' => 'required|integer',
         ]);
 
         // Validasi data produk
@@ -97,7 +97,7 @@ class ProductController extends BaseController
     {
         // Validasi input
         if (!$this->validate([
-            'name' => 'required|min_length[3]|max_length[255]|is_unique[products.name,id,{id}]',
+            'name' => 'required|min_length[3]|max_length[255]',
             'category_id' => 'required|integer',
             'price' => 'required|numeric',
             'stock' => 'required|integer',

@@ -61,6 +61,31 @@ class KeuanganController extends BaseController
             ->orderBy('finance_date', 'DESC')
             ->findAll();
 
+       $orderIds = [];
+foreach ($transactions as $t) {
+    if ($t->type === 'income' && !empty($t->order_id)) {
+        $orderIds[] = (int) $t->order_id; // pastikan integer
+    }
+}
+
+$groupedOrderItems = [];
+if (!empty($orderIds)) {
+    $orderItems = $this->orderItemModel
+        ->select('order_items.*, products.name AS product_name')
+        ->join('products', 'products.id = order_items.product_id')
+        ->whereIn('order_items.order_id', $orderIds)
+        ->findAll();
+
+    foreach ($orderItems as $item) {
+        $groupedOrderItems[$item->order_id][] = $item;
+    }
+}
+
+foreach ($transactions as $t) {
+    $t->items = $groupedOrderItems[$t->order_id] ?? [];
+}
+
+
         return view('admin/keuangan/index', [
             'title'        => 'Rekapan Keuangan',
             'start_date'   => $startDate,
@@ -89,6 +114,9 @@ class KeuanganController extends BaseController
                 'message' => 'Deskripsi dan jumlah wajib diisi.'
             ]);
         }
+
+        // Pastikan finance_date dalam format YYYY-MM-DD
+        $data['created_at'] = date('Y-m-d H:i:s');
 
         $this->financeModel->insert($data);
 

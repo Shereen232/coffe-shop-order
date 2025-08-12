@@ -43,8 +43,8 @@ class DashboardController extends BaseController
         $data['title'] = 'Dashboard Admin';
         $data['total_views'] = $totalViews;
         $data['total_products'] = $products->get()->getRow()->total_products;
-        $data['total_orders'] = 0;
-        $data['total_payments'] = 0;
+        $data['total_orders'] = $db->table('orders')->countAll(); // <-- Perbaiki di sini
+        $data['total_payments'] = $db->table('payments')->countAll();
         $data['latest_orders'] = $latestOrders->getResult();
         $data['reviews'] = $reviews;
         return view('admin/index.php', $data);

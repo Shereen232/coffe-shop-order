@@ -12,7 +12,7 @@ class FinanceModel extends Model
     protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['type', 'amount', 'notes', 'finance_date', 'created_at'];
+    protected $allowedFields    = ['order_id','type', 'amount', 'notes', 'finance_date', 'created_at'];
 
     protected bool $allowEmptyInserts = false;
 

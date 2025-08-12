@@ -91,6 +91,7 @@
                                 <th>Tanggal Masuk</th>
                                 <th>Jenis</th>
                                 <th>Notes</th>
+                                <th>Detail</th>
                                 <th>Jumlah</th>
                             </tr>
                         </thead>
@@ -109,6 +110,17 @@
                                         </span>
                                     </td>
                                     <td><?= esc($t->notes) ?></td>
+                                    <td> 
+                                        <?php if (!empty($order->items)) : ?>
+                                            <ul class="mb-0 ps-3">
+                                                <?php foreach ($order->items as $item): ?>
+                                                    <li><?= esc($item->product_name) ?> (<?= esc($item->quantity) ?>x)</li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        <?php else : ?>
+                                            <span class="text-muted">Tidak ada item</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="text-end"><span class="badge bg-<?= $t->type === 'income' ? 'success' : 'danger' ?>">
                                             Rp <?= number_format($t->amount, 0, ',', '.') ?>
                                     </span></td>

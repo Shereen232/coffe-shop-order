@@ -29,31 +29,42 @@ class PaymentController extends BaseController
     {
         $data = $this->request->getJSON();
 
-        if (!isset($data->order_id) || !isset($data->transaction_status)) {
-            return $this->response->setJSON(['status' => 'failed', 'message' => 'Invalid data'])->setStatusCode(400);
+        // Validasi data wajib
+        if (empty($data->order_id) || empty($data->transaction_status)) {
+            return $this->response->setJSON([
+                'status' => 'failed',
+                'message' => 'Invalid data'
+            ])->setStatusCode(400);
         }
+        
+        $orderId = (int) $data->order_id;
 
         // Update status order jadi "processing"
-        $order = $this->orderModel->find($data->order_id);
+        $order = $this->orderModel->find($orderId);
         if ($order) {
-            $this->orderModel->update($data->order_id, ['status' => 'processing']);
+            $this->orderModel->update($orderId, ['status' => 'processing']);
         }
 
         // Update status pembayaran
-        $this->paymentModel->where('order_id', $data->order_id)
+        $this->paymentModel
+            ->where('order_id', $orderId)
             ->set(['payment_status' => $data->transaction_status])
             ->update();
 
-        // Catat keuangan
-        $this->financeModel->save([
-            'type' => 'income',
-            'amount' => $data->gross_amount,
-            'notes' => 'Pembayaran online untuk order ID ' . $data->order_id,
-        ]);
-
-        // Kurangi stok hanya jika pembayaran settlement
+        // Catat keuangan hanya jika status settlement
         if ($data->transaction_status === 'settlement') {
-            $orderItems = $this->orderItemModel->where('order_id', $data->order_id)->findAll();
+            $this->financeModel->insert([
+                'order_id'     => $orderId,
+                'type'         => 'income',
+                'amount'       => $data->gross_amount ?? 0,
+                'finance_date' => date('Y-m-d H:i:s'),
+                'notes'        => 'Pembayaran online untuk order ID ' . $orderId,
+            ]);
+
+            // Kurangi stok produk
+            $orderItems = $this->orderItemModel
+                ->where('order_id', $orderId)
+                ->findAll();
 
             foreach ($orderItems as $item) {
                 $this->productModel
@@ -64,6 +75,6 @@ class PaymentController extends BaseController
         }
 
         return $this->response->setJSON(['status' => 'success']);
-
     }
+
 }

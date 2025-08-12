@@ -148,14 +148,14 @@
                 html += `
                 <div class="col-6 col-md-4 col-lg-3">
                   <div class="product-item">
-                    <span class="badge bg-success position-absolute m-3">${product.price_discount <= 0 ? '' : '-' + product.price_discount + '%'}</span>
+                    
                     <a href="<?= base_url() ?>product/${product.id}">
                       <figure style="overflow:hidden;">
                         <img src="<?= base_url('uploads/products/') ?>${product.image}" class="tab-image">
                       </figure>
                     </a>
                     <h3>${product.name}</h3>
-                    <span class="qty">1 Unit</span>
+                    <span class="qty"></span>
                     <span class="price">${formatRupiah(product.price)}</span>
                     <div class="d-flex align-items-center justify-content-between">
                       <div class="input-group product-qty">
