@@ -167,9 +167,10 @@ class OrderController extends BaseController
             }
 
             $this->financeModel->save([
-                'type' => 'income',
-                'amount' => $this->orderModel->find($id)->total_price,
-                'notes' => 'Pembayaran cash untuk order ID ' . $id,
+                'type'      => 'income',
+                'amount'    => $this->orderModel->find($id)->total_price,
+                'notes'     => 'Pembayaran cash untuk order ID ' . $id,
+                'order_id'  => $id, // <-- Tambahkan ini
             ]);
 
             return $this->response->setJSON([

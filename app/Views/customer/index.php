@@ -57,6 +57,36 @@
     color: #333;
     text-align: center;
   }
+  
+  /* Produk habis: abu-abu, overlay, tombol disable */
+.product-item.out-of-stock {
+  opacity: 0.6;
+  pointer-events: none;
+  position: relative;
+}
+.product-item .img-grayscale {
+  filter: grayscale(100%);
+}
+.stok-habis-overlay {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  background: rgba(128,128,128,0.7);
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 8px 0;
+  z-index: 3;
+  border-radius: 0 0 8px 8px;
+}
+.product-item button[disabled], .product-item .btn[disabled] {
+  background: #ccc !important;
+  color: #888 !important;
+  border: none !important;
+  cursor: not-allowed !important;
+}
 
 </style>
 
@@ -147,11 +177,11 @@
 
                 html += `
                 <div class="col-6 col-md-4 col-lg-3">
-                  <div class="product-item">
-                    
+                  <div class="product-item ${product.stock == 0 ? 'out-of-stock' : ''}" style="position:relative;">
                     <a href="<?= base_url() ?>product/${product.id}">
-                      <figure style="overflow:hidden;">
-                        <img src="<?= base_url('uploads/products/') ?>${product.image}" class="tab-image">
+                      <figure style="overflow:hidden; position:relative;">
+                        <img src="<?= base_url('uploads/products/') ?>${product.image}" class="tab-image ${product.stock == 0 ? 'img-grayscale' : ''}">
+                        ${product.stock == 0 ? `<div class="stok-habis-overlay">Stok Habis</div>` : ''}
                       </figure>
                     </a>
                     <h3>${product.name}</h3>
@@ -160,18 +190,20 @@
                     <div class="d-flex align-items-center justify-content-between">
                       <div class="input-group product-qty">
                         <span class="input-group-btn">
-                          <button type="button" id="${minusBtnId}" class="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-id="${product.id}">
+                          <button type="button" id="${minusBtnId}" class="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-id="${product.id}" ${product.stock == 0 ? 'disabled' : ''}>
                             <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
                           </button>
                         </span>
-                        <input type="text" id="${qtyInputId}" name="quantity" class="form-control input-number" value="1" min="1" max="${product.stock}">
+                        <input type="text" id="${qtyInputId}" name="quantity" class="form-control input-number" value="1" min="1" max="${product.stock}" ${product.stock == 0 ? 'disabled' : ''}>
                         <span class="input-group-btn">
-                          <button type="button" id="${plusBtnId}" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-id="${product.id}">
+                          <button type="button" id="${plusBtnId}" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-id="${product.id}" ${product.stock == 0 ? 'disabled' : ''}>
                             <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
                           </button>
                         </span>
                       </div>
-                      <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link"> Tambahkan Ke Keranjang <iconify-icon icon="uil:shopping-cart"></iconify-icon></button>
+                      <button id="btn-addchart" data-id="${product.id}" data-qty="1" class="nav-link" ${product.stock == 0 ? 'disabled' : ''}>
+                        Tambahkan Ke Keranjang <iconify-icon icon="uil:shopping-cart"></iconify-icon>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -186,6 +218,7 @@
             // Setelah elemen dimuat, pasang event listener untuk setiap produk
             if (data.products && data.products.length > 0) {
               data.products.forEach(product => {
+                if(product.stock == 0) return; // skip stok habis
                 const qtyInput = document.getElementById(`quantity-${product.id}`);
                 const minusBtn = document.getElementById(`minus-${product.id}`);
                 const plusBtn = document.getElementById(`plus-${product.id}`);
@@ -210,8 +243,8 @@
                   } else if (val > maxStock) {
                     qtyInput.value = maxStock;
                   }
-                });                
-              });
+                });
+              }); 
             }
           },
           error: function (xhr, status, error) {

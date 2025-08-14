@@ -111,10 +111,11 @@
                                     </td>
                                     <td><?= esc($t->notes) ?></td>
                                     <td> 
-                                        <?php if (!empty($order->items)) : ?>
+                                        <?php if (!empty($t->items)) : ?>
                                             <ul class="mb-0 ps-3">
-                                                <?php foreach ($order->items as $item): ?>
-                                                    <li><?= esc($item->product_name) ?> (<?= esc($item->quantity) ?>x)</li>
+                                                <?php foreach ($t->items as $item): ?>
+                                                    <li><?= esc($item->product_name) ?> (<?= esc($item->quantity) ?>x) (Rp. <?= number_format($item->price, 0, ',', '.') ?>)
+                                                    </li>  <!-- history detail dan harga -->
                                                 <?php endforeach; ?>
                                             </ul>
                                         <?php else : ?>
