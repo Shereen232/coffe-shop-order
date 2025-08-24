@@ -5,18 +5,20 @@ namespace App\Controllers\Admin;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\PaymentModel;
+use App\Models\UserModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 class KeuanganController extends BaseController
 {
-    protected $orderModel, $orderItemModel, $paymentModel, $financeModel;
+    protected $orderModel, $orderItemModel, $paymentModel, $financeModel, $userModel;
     public function __construct()
     {
         $this->orderModel = new OrderModel();
         $this->orderItemModel = new OrderItemModel();
         $this->paymentModel = new PaymentModel();
         $this->financeModel = new \App\Models\FinanceModel();
+        $this->userModel = new UserModel();
     }
 
 
@@ -56,6 +58,7 @@ class KeuanganController extends BaseController
 
         // Transaksi
         $transactions = $this->financeModel
+            ->join('payments', 'finance.order_id = payments.order_id', 'left')
             ->where('finance_date >=', $startDateTime)
             ->where('finance_date <=', $endDateTime)
             ->orderBy('finance_date', 'DESC')
@@ -162,10 +165,38 @@ class KeuanganController extends BaseController
 
         // Transaksi
         $transactions = $this->financeModel
+            ->join('payments', 'finance.order_id = payments.order_id', 'left')
             ->where('finance_date >=', $startDateTime)
             ->where('finance_date <=', $endDateTime)
             ->orderBy('finance_date', 'DESC')
             ->findAll();
+
+       $orderIds = [];
+        foreach ($transactions as $t) {
+            if ($t->type === 'income' && !empty($t->order_id)) {
+                $orderIds[] = (int) $t->order_id; // pastikan integer
+            }
+        }
+
+        $groupedOrderItems = [];
+        if (!empty($orderIds)) {
+            $orderItems = $this->orderItemModel
+                ->select('order_items.*, products.name AS product_name')
+                ->join('products', 'products.id = order_items.product_id')
+                ->whereIn('order_items.order_id', $orderIds)
+                ->findAll();
+
+            foreach ($orderItems as $item) {
+                $groupedOrderItems[$item->order_id][] = $item;
+            }
+        }
+
+        foreach ($transactions as $t) {
+            $t->items = $groupedOrderItems[$t->order_id] ?? [];
+        }
+
+        $id = session()->get('user_id');
+        $user = $this->userModel->find($id);
 
         $data = [
             'start_date'   => $startDate,
@@ -174,6 +205,7 @@ class KeuanganController extends BaseController
             'totalExpense' => $totalExpense,
             'transactions' => $transactions,
             'nama_toko'    => 'Coffee Shop Order',
+            'user'         => $user,
         ];
 
         // Render HTML dari view

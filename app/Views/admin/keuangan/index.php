@@ -64,7 +64,7 @@
                     <div class="card shadow-sm border-0">
                         <div class="card-body d-flex align-items-center justify-content-between">
                             <div>
-                                <h6 class="text-muted">Saldo Bersih</h6>
+                                <h6 class="text-muted">Sisa Kas</h6>
                                 <h4 class="text-primary">Rp <?= number_format($totalIncome - $totalExpense, 0, ',', '.') ?></h4>
                             </div>
                             <div class="bg-primary text-white rounded-circle p-3">
@@ -89,10 +89,13 @@
                             <tr>
                                 <th>#</th>
                                 <th>Tanggal Masuk</th>
+                                <th>TRX ID</th>
                                 <th>Jenis</th>
-                                <th>Notes</th>
-                                <th>Detail</th>
+                                <th>Catatan</th>
+                                <th>Produk</th>
+                                <th>Harga</th>
                                 <th>Jumlah</th>
+                                <th>Sub Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,6 +107,7 @@
                                 <tr>
                                     <td><?= $no++ ?></td>
                                     <td><?= date('d M Y', strtotime($t->finance_date)) ?></td>
+                                    <td><?= $t->transaction_id ?? '-' ?></td>
                                     <td>
                                         <span class="badge bg-<?= $t->type === 'income' ? 'success' : 'danger' ?>">
                                             <?= $t->type === 'income' ? 'Uang Masuk' : 'Uang Keluar' ?>
@@ -114,7 +118,31 @@
                                         <?php if (!empty($t->items)) : ?>
                                             <ul class="mb-0 ps-3">
                                                 <?php foreach ($t->items as $item): ?>
-                                                    <li><?= esc($item->product_name) ?> (<?= esc($item->quantity) ?>x) (Rp. <?= number_format($item->price, 0, ',', '.') ?>)
+                                                    <li><?= esc($item->product_name) ?> 
+                                                    </li>  <!-- history detail dan harga -->
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        <?php else : ?>
+                                            <span class="text-muted">Tidak ada item</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td> 
+                                        <?php if (!empty($t->items)) : ?>
+                                            <ul class="mb-0 ps-3">
+                                                <?php foreach ($t->items as $item): ?>
+                                                    <li><?= esc('Rp. ' . number_format($item->price, 0, ',', '.')) ?></li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        <?php else : ?>
+
+                                            <span class="text-muted">Tidak ada item</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td> 
+                                        <?php if (!empty($t->items)) : ?>
+                                            <ul class="mb-0 ps-3">
+                                                <?php foreach ($t->items as $item): ?>
+                                                    <li><?= esc($item->quantity) ?> 
                                                     </li>  <!-- history detail dan harga -->
                                                 <?php endforeach; ?>
                                             </ul>

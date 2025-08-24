@@ -80,7 +80,7 @@ $role = session()->get('role');
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="<?= base_url('admin/keuangan') ?>">
                             <i class="bi bi-cash-stack"></i>
-                            <span>Manajemen Keuangan</span>
+                            <span>Manajemen Kas</span>
                         </a>
                     </li>
                 <?php endif; ?>
